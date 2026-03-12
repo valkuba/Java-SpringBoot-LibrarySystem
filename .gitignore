@@ -1,0 +1,54 @@
+
+# --------------------
+# Build output
+# --------------------
+
+# Maven
+/target/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+/.gradle/
+/build/
+
+# Eclipse
+/.classpath
+/.project
+/.settings/
+
+# IntelliJ IDEA
+*.iml
+*.iws
+*.ipr
+/.idea/
+/out/
+
+# JetBrains IDEs (keep the .idea/.gitignore for fine-grained excludes)
+
+# --------------------
+# Logs and temporary files
+# --------------------
+
+*.log
+logs/
+
+# Spring Boot devtools cache
+/restart/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Others
+*.class
+
+# Ignore generated files by build tools
+**/generated/**
+
+# Maven wrapper
+mvnw
+mvnw.cmd
+
+# Gradle wrapper
+gradlew
+gradlew.bat
