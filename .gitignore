@@ -44,11 +44,3 @@ Thumbs.db
 
 # Ignore generated files by build tools
 **/generated/**
-
-# Maven wrapper
-mvnw
-mvnw.cmd
-
-# Gradle wrapper
-gradlew
-gradlew.bat
