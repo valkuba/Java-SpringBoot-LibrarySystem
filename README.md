@@ -11,12 +11,12 @@ Project is based on the Spring Boot framework using.
 ---
 
 ## Team Members
-| Name     | Service | Role        |
-|----------|-------|-------------|
-| Member 1 | TODO  | Developer   |
-| Member 2 | TODO  | Developer   |
-| Member 3 | TODO  | Developer   |
-| Adam Pap | TODO  | Team Leader |
+| Name     | Service      | Role        |
+|----------|--------------|-------------|
+| Member 1 | TODO         | Developer   |
+| Member 2 | TODO         | Developer   |
+| Member 3 | TODO         | Developer   |
+| Adam Pap | Book service | Team Leader |
 
 ---
 
