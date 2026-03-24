@@ -28,9 +28,6 @@ public class NotificationDto {
     @Schema(description = "Email address of the recipient")
     private String recipientEmail;
 
-    @Schema(description = "Status of the notification", example = "SENT, PENDING, FAILED")
-    private Notification.NotificationStatus status;
-
     @Schema(description = "Timestamp when the notification was created")
     private LocalDateTime createdAt;
 }

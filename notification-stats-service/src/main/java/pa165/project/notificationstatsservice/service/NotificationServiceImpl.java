@@ -2,12 +2,15 @@ package pa165.project.notificationstatsservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import pa165.project.notificationstatsservice.exception.ResourceNotFoundException;
 import pa165.project.notificationstatsservice.model.Notification;
 import pa165.project.notificationstatsservice.repository.NotificationRepository;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+
+/* *
+ * Implementation of the Service methods defined by interface.
+ * */
 
 @Service
 @RequiredArgsConstructor
@@ -21,15 +24,13 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public Notification getById(Long id) {
-        return notificationRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Notification with id " + id + " not found"));
+    public Optional<Notification> getById(Long id) {
+        return notificationRepository.findById(id);
     }
 
     @Override
     public Notification createNotification(Notification notification) {
         notification.setCreatedAt(LocalDateTime.now());
-        notification.setStatus(Notification.NotificationStatus.PENDING);
         return notificationRepository.saveNotification(notification);
     }
 

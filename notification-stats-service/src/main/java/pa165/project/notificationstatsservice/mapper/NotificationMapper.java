@@ -16,7 +16,6 @@ public class NotificationMapper {
                 .id(notification.getId())
                 .message(notification.getMessage())
                 .recipientEmail(notification.getRecipientEmail())
-                .status(notification.getStatus())
                 .createdAt(notification.getCreatedAt())
                 .build();
     }
@@ -25,7 +24,6 @@ public class NotificationMapper {
         return Notification.builder()
                 .message(dto.getMessage())
                 .recipientEmail(dto.getRecipientEmail())
-                .status(Notification.NotificationStatus.PENDING)
                 .build();
     }
 }

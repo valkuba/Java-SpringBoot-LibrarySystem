@@ -8,8 +8,12 @@ import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.mapper.NotificationMapper;
 import pa165.project.notificationstatsservice.model.Notification;
 import pa165.project.notificationstatsservice.service.NotificationService;
-
 import java.util.List;
+import java.util.Optional;
+
+/* *
+ * Implementation of the Notification Facade methods defined by interface
+ * */
 
 @Component
 @RequiredArgsConstructor
@@ -25,10 +29,12 @@ public class NotificationFacadeImpl implements NotificationFacade{
     }
 
     @Override
-    public NotificationDto getById(Long id) {
-        return notificationMapper.toDto(notificationService.getById(id));
+    public Optional<NotificationDto> getById(Long id) {
+        return notificationService.getById(id)
+                .map(notificationMapper::toDto);
     }
 
+    // Dto -> model, calls service, returns Dto
     @Override
     public NotificationDto createNotification(@Valid CreateNotificationDto dto) {
         Notification n = notificationMapper.toModel(dto);
@@ -41,6 +47,7 @@ public class NotificationFacadeImpl implements NotificationFacade{
         notificationService.deleteNotification(id);
     }
 
+    // calls service and creates the dto by itself
     @Override
     public NotificationDto createOverdueNotification(String recipientEmail, String bookTitle) {
         Notification n = notificationService.createOverdueNotification(recipientEmail, bookTitle);

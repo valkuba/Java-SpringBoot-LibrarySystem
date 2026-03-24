@@ -15,13 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Notification {
-    public enum NotificationStatus {
-        SENT, PENDING, FAILED
-    }
-
     private Long id;
     private String message;
     private String recipientEmail;
-    private NotificationStatus status;
     private LocalDateTime createdAt;
 }

@@ -13,6 +13,10 @@ import pa165.project.notificationstatsservice.facade.NotificationFacade;
 
 import java.util.List;
 
+/* *
+ * REST controller for API endpoints for notifications
+ * */
+
 @RestController
 @RequestMapping("/api/notifications")
 @RequiredArgsConstructor
@@ -29,7 +33,9 @@ public class NotificationRestController {
     @GetMapping("/{id}")
     @Operation(summary = "Get notification by ID")
     public ResponseEntity<NotificationDto> getNotificationById(@PathVariable Long id) {
-        return ResponseEntity.ok(notificationFacade.getById(id));
+        return notificationFacade.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
