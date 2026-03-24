@@ -11,12 +11,21 @@ Project is based on the Spring Boot framework.
 ---
 
 ## Team Members
+<<<<<<< README.md
+| Name     | Service | Role        |
+|----------|-------|-------------|
+| Member 1 | TODO  | Developer   |
+| Member 2 | TODO  | Developer   |
+| Jakub Valeš | Notification and Statistics Service  | Developer   |
+| Adam Pap | Book service  | Team Leader |
+=======
 | Name     | Service      | Role        |
 |----------|--------------|-------------|
 | Member 1 | TODO         | Developer   |
 | Member 2 | TODO         | Developer   |
-| Member 3 | TODO         | Developer   |
+| Jakub Valeš | Notification and Statistics Service  | Developer   |
 | Adam Pap | Book service | Team Leader |
+>>>>>>> README.md
 
 ---
 
