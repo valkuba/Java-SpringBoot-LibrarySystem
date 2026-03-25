@@ -1,5 +1,6 @@
 package pa165.project.memberservice.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pa165.project.memberservice.model.Member;
@@ -10,12 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
-
-    public MemberServiceImpl(MemberRepository memberRepository) {
-        this.memberRepository = memberRepository;
-    }
 
     @Override
     public Member registerMember(Member member) throws MemberRepositoryException {
@@ -39,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member updateMember(Long id, Member member) throws MemberRepositoryException, MemberUpdateException {
+    public Member updateMember(Member member) throws MemberRepositoryException, MemberUpdateException {
         return memberRepository.update(member);
     }
 

@@ -17,7 +17,7 @@ public class Member {
     private String email;
     private String password;
     private Date registrationDate;
-    private boolean isActivated;
+    private boolean isActivated = false;
 
     public void validateChanges(Member changed) throws MemberUpdateException {
         if(!id.equals(changed.getId()))

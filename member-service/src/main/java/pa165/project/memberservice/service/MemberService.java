@@ -12,7 +12,7 @@ public interface MemberService {
     void activateMember(Long id) throws MemberRepositoryException;
     List<Member> getAllMembers();
     Optional<Member> getMemberById(Long id);
-    Member updateMember(Long id, Member member) throws MemberRepositoryException, MemberUpdateException;
+    Member updateMember(Member member) throws MemberRepositoryException, MemberUpdateException;
     void removeMember(Long id);
     Optional<Member> getMemberWithEmail(String email);
     Optional<Member> getMemberWithUsername(String pattern);

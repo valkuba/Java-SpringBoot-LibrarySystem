@@ -4,10 +4,7 @@ import org.springframework.stereotype.Repository;
 import pa165.project.memberservice.model.Member;
 import pa165.project.memberservice.model.MemberUpdateException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 @Repository
 public class MemberRepositoryImpl implements MemberRepository {
@@ -24,7 +21,9 @@ public class MemberRepositoryImpl implements MemberRepository {
         if(store.values().stream().anyMatch(m -> m.getEmail().equals(member.getEmail()))){
             throw new EmailAlreadyRegisteredException(member.getEmail());
         }
-        store.put(idGenerator.get(), member);
+        member.setId(idGenerator.getAndIncrement());
+        member.setRegistrationDate(new Date());
+        store.put(member.getId(), member);
     }
 
     @Override
