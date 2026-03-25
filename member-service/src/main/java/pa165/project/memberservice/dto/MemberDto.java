@@ -31,4 +31,7 @@ public class MemberDto {
 
     @Schema(description = "Date when the member registered")
     private Date registrationDate;
+
+    @Schema(description = "Activation status of user account")
+    private boolean activated;
 }

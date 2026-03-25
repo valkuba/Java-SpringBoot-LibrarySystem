@@ -34,7 +34,7 @@ public class MemberRepositoryImpl implements MemberRepository {
         }
         var member = memberOpt.get();
         member.setActivated(true);
-        update(member);
+        store.put(member.getId(), member);
     }
 
     @Override
