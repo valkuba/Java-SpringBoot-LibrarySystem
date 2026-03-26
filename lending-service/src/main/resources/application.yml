@@ -1,1 +1,7 @@
-spring.application.name=lending-service
+spring:
+  application:
+    name: lending-service
+
+server:
+  port: 8081
+

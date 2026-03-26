@@ -13,7 +13,7 @@ Project is based on the Spring Boot framework.
 ## Team Members
 | Name     | Service      | Role        |
 |----------|--------------|-------------|
-| Member 1 | TODO         | Developer   |
+| Stanislav Krč | Member service         | Developer   |
 | Milan Takáč | Lending service         | Developer   |
 | Jakub Valeš | Notification and Statistics Service  | Developer   |
 | Adam Pap | Book service | Team Leader |

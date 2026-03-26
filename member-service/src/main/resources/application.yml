@@ -1,1 +1,7 @@
-spring.application.name=member-service
+spring:
+  application:
+    name: member-service
+
+server:
+  port: 8082
+

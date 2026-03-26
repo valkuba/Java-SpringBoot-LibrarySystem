@@ -1,1 +1,6 @@
-spring.application.name=notification-stats-service
+spring:
+  application:
+    name: notification-stats-service
+
+server:
+  port: 8083
