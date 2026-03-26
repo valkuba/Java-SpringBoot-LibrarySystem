@@ -6,7 +6,7 @@ to manage their resources e.g. books, services. The services are represented by 
 registered members to reserve a book and then borrow it for pre-defined period of time.
 It also handles late return fines and provides statistical reports for librarians.
 
-Project is based on the Spring Boot framework using.
+Project is based on the Spring Boot framework.
 
 ---
 
@@ -14,9 +14,9 @@ Project is based on the Spring Boot framework using.
 | Name        | Service | Role        |
 |-------------|---------|-------------|
 | Member 1    | TODO    | Developer   |
-| Member 2    | TODO    | Developer   |
 | Milan Takac | Lending | Developer   |
-| Adam Pap    | TODO    | Team Leader |
+| Jakub Valeš | Notification and Statistics Service  | Developer   |
+| Adam Pap | Book service | Team Leader |
 
 ---
 
@@ -35,6 +35,9 @@ mvn clean install
 cd book-service
 mvn spring-boot:run
 ```
+Then you can see for yourself that the service is up and running by for example entering this URL into your 
+browser http://localhost:8080/swagger-ui/index.html#/Book/searchBooks
+On the URL is based the Swagger-UI with the documentation of the REST API endpoints.
 
 ---
 
