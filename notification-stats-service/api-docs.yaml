@@ -1,0 +1,212 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: http://localhost:8083
+  description: Generated server url
+tags:
+- name: Statistics API
+  description: API for managing statistics
+- name: Notification API
+  description: API for managing notifications
+paths:
+  /api/notifications:
+    get:
+      tags:
+      - Notification API
+      summary: Get all notifications
+      operationId: getAllNotifications
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationDto"
+    post:
+      tags:
+      - Notification API
+      summary: Create a new notification
+      operationId: createNotification
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateNotificationDto"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/NotificationDto"
+  /api/notifications/overdue:
+    post:
+      tags:
+      - Notification API
+      summary: Create overdue notification
+      operationId: createOverdueNotification
+      parameters:
+      - name: recipientEmail
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: bookTitle
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/NotificationDto"
+  /api/stats:
+    get:
+      tags:
+      - Statistics API
+      summary: Get all statistics
+      operationId: getAllStats
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StatsDto"
+  /api/stats/popular-books:
+    get:
+      tags:
+      - Statistics API
+      summary: Get top N popular books
+      operationId: getTopNBooks
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+          default: 5
+          minimum: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PopularBookDto"
+  /api/notifications/{id}:
+    get:
+      tags:
+      - Notification API
+      summary: Get notification by ID
+      operationId: getNotificationById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/NotificationDto"
+    delete:
+      tags:
+      - Notification API
+      summary: Delete a notification
+      operationId: deleteNotification
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+  /api/notifications/sorted:
+    get:
+      tags:
+      - Notification API
+      summary: Get notifications sorted by date
+      operationId: getAllSortedByDate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/NotificationDto"
+components:
+  schemas:
+    CreateNotificationDto:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Content of the notification message
+          minLength: 1
+        recipientEmail:
+          type: string
+          description: Email address of the recipient
+          minLength: 1
+    NotificationDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the notification
+        message:
+          type: string
+          description: Content of the notification message
+        recipientEmail:
+          type: string
+          description: Email address of the recipient
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the notification was created
+    StatsDto:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: Unique identifier of the statistics record
+        bookTitle:
+          type: string
+          description: Title of the book which stats we want
+        returned:
+          type: boolean
+          description: Whether the book has been returned
+    PopularBookDto:
+      type: object
+      properties:
+        bookTitle:
+          type: string
+          description: Title of the book
+        borrowCount:
+          type: integer
+          format: int64
+          description: Number of times the book has been borrowed
