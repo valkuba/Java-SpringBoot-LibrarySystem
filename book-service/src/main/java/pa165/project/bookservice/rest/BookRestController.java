@@ -11,6 +11,7 @@ import pa165.project.bookservice.dto.BookDto;
 import pa165.project.bookservice.facade.BookFacade;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/books")
@@ -61,6 +62,16 @@ public class BookRestController {
                                                       @RequestParam(required = false) String author,
                                                       @RequestParam(required = false) String genre) {
         return  ResponseEntity.ok(bookFacade.searchBooks(title, author, genre));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class) // handle not found exception when book is not found
+    public ResponseEntity<String> handleNotFound(NoSuchElementException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class) // handle bad request exception when ISBN is invalid
+    public ResponseEntity<String> handleBadRequest(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
 }
