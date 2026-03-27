@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pa165.project.memberservice.dto.MemberDto;
 import pa165.project.memberservice.dto.NewMemberRegisteringDto;
 import pa165.project.memberservice.facade.MemberFacade;
+
 import java.util.List;
 
 @RestController
@@ -50,9 +51,8 @@ public class MemberRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/register")
     @Operation(summary = "Register a new member")
-    @GetMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     public MemberDto registerMember(@Valid @RequestBody NewMemberRegisteringDto newMemberRegisteringDto) {
         return memberFacade.registerMember(newMemberRegisteringDto);
