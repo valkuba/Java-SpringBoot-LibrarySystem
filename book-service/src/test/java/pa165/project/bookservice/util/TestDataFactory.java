@@ -6,6 +6,11 @@ import pa165.project.bookservice.model.Book;
 
 import java.util.List;
 
+/* *
+ * Data for tests of each layer
+ * Use bookDto or BookEntities in the tests
+ */
+
 @Component
 public class TestDataFactory {
 
@@ -28,7 +33,7 @@ public class TestDataFactory {
                 .id(2L)
                 .title("Great Gatsby")
                 .author("Francis Scott Fitzgerald")
-                .isbn("978-1-85326-041-4")
+                .isbn("9781853260414")
                 .genre("Novel")
                 .description("Lorem ipsum 2")
                 .availableCopies(1)
@@ -53,7 +58,7 @@ public class TestDataFactory {
         book2.setId(2L);
         book2.setTitle("Great Gatsby");
         book2.setAuthor("Francis Scott Fitzgerald");
-        book2.setIsbn("978-1-85326-041-4");
+        book2.setIsbn("9781853260414");
         book2.setGenre("Novel");
         book2.setDescription("Lorem ipsum 2");
         book2.setAvailableCopies(1);

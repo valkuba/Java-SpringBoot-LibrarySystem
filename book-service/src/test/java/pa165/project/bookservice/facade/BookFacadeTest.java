@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 
+/* *
+ * Tests for facade layer
+ */
+
 @ExtendWith(MockitoExtension.class)
 public class BookFacadeTest {
     @Mock
@@ -86,10 +90,10 @@ public class BookFacadeTest {
         Mockito.when(bookMapper.toDto(any()))
                 .thenReturn(TestDataFactory.bookDtos.get(0));
 
-        BookDto foundEntity = bookFacade.updateBook(67L, TestDataFactory.bookDtos.get(0));
+        BookDto foundEntity = bookFacade.updateBook(2L, TestDataFactory.bookDtos.get(0));
 
         assertEquals(TestDataFactory.bookDtos.get(0), foundEntity);
-        Mockito.verify(bookService).updateBook(67L, TestDataFactory.bookEntities.get(0));
+        Mockito.verify(bookService).updateBook(2L, TestDataFactory.bookEntities.get(0));
     }
 
     @Test
@@ -116,9 +120,8 @@ public class BookFacadeTest {
         Mockito.when(bookService.searchBooks(null, null, "NonExistingGenre"))
                 .thenReturn(Collections.emptyList());
 
-        BookDto foundEntity = bookFacade.searchBooks(null, null, "NonExistingGenre")
-                .stream().findFirst().orElse(null);
+        List<BookDto> foundEntities  = bookFacade.searchBooks(null, null, "NonExistingGenre");
 
-        assertThat(foundEntity).isNull();
+        assertThat(foundEntities).isEmpty();
     }
 }

@@ -12,11 +12,15 @@ import pa165.project.bookservice.util.TestDataFactory;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+
+/* *
+ * Test for the service layer
+ * */
 
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
@@ -47,10 +51,10 @@ public class BookServiceTest {
 
     @Test
     void getBookById_BookNotFound_ReturnsEmpty() {
-        Mockito.when(bookRepository.findById(99L))
+        Mockito.when(bookRepository.findById(67676767L))
                 .thenReturn(Optional.empty());
 
-        Optional<Book> foundEntity = bookService.getBookById(99L);
+        Optional<Book> foundEntity = bookService.getBookById(67676767L);
 
         assertTrue(foundEntity.isEmpty());
     }
@@ -67,14 +71,47 @@ public class BookServiceTest {
     }
 
     @Test
+    void createBook_InvalidIsbnWrongCheckDigit_ThrowsException() {
+        Book invalidBook = new Book();
+        invalidBook.setIsbn("9780060934911");
+
+        // Act + assert together, because assertThrows triggers the exception
+        assertThrows(IllegalArgumentException.class, () -> bookService.createBook(invalidBook));
+    }
+
+    @Test
     void updateBook_BookUpdated_ReturnsBook() {
-        Mockito.when(bookRepository.save(TestDataFactory.bookEntities.get(0)))
-                .thenReturn(TestDataFactory.bookEntities.get(0));
+        Mockito.when(bookRepository.findById(1L))
+                .thenReturn(Optional.of(TestDataFactory.bookEntities.get(1)));
+        Mockito.when(bookRepository.save(TestDataFactory.bookEntities.get(1)))
+                .thenReturn(TestDataFactory.bookEntities.get(1));
 
-        Book result = bookService.updateBook(1L, TestDataFactory.bookEntities.get(0));
+        Book foundEntity = bookService.updateBook(1L, TestDataFactory.bookEntities.get(1));
 
-        assertEquals(1L, result.getId());
-        Mockito.verify(bookRepository).save(TestDataFactory.bookEntities.get(0));
+        assertEquals(1L, foundEntity.getId());
+        Mockito.verify(bookRepository).save(TestDataFactory.bookEntities.get(1));
+    }
+
+    @Test
+    void updateBook_InvalidIsbnFormat_ThrowsException() {
+        Mockito.when(bookRepository.findById(1L))
+                .thenReturn(Optional.of(TestDataFactory.bookEntities.get(0)));
+
+        Book invalidBook = new Book();
+        invalidBook.setId(67L);
+        invalidBook.setIsbn("DefinitelyNotISBN");
+
+        assertThrows(IllegalArgumentException.class,
+                () -> bookService.updateBook(1L, invalidBook));
+    }
+
+    @Test
+    void updateBook_BookNotFound_ThrowsException() {
+        Mockito.when(bookRepository.findById(67676767L))
+                .thenReturn(Optional.empty());
+
+        assertThrows(NoSuchElementException.class,
+                () -> bookService.updateBook(67676767L, TestDataFactory.bookEntities.get(0)));
     }
 
     @Test
@@ -89,9 +126,9 @@ public class BookServiceTest {
         Mockito.when(bookRepository.findAll())
                 .thenReturn(TestDataFactory.bookEntities);
 
-        List<Book> result = bookService.searchBooks(null, TestDataFactory.bookEntities.get(0).getAuthor(), null);
+        List<Book> foundEntities = bookService.searchBooks(null, TestDataFactory.bookEntities.get(0).getAuthor(), null);
 
-        assertThat(result).containsExactly(TestDataFactory.bookEntities.get(0));
+        assertThat(foundEntities).containsExactly(TestDataFactory.bookEntities.get(0));
     }
 
     @Test
@@ -99,10 +136,8 @@ public class BookServiceTest {
         Mockito.when(bookRepository.findAll())
                 .thenReturn(TestDataFactory.bookEntities);
 
-        List<Book> result = bookService.searchBooks(null, "Not the author", null);
+        List<Book> foundEntities = bookService.searchBooks(null, "Not the author", null);
 
-        assertThat(result).isEmpty();
+        assertThat(foundEntities).isEmpty();
     }
-
-
 }
