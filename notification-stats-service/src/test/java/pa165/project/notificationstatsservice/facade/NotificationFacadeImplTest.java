@@ -56,6 +56,20 @@ class NotificationFacadeImplTest {
     }
 
     @Test
+    void getById_whenFound_shouldReturnDto() {
+        Notification model = Notification.builder().id(1L).build();
+        NotificationDto dto = NotificationDto.builder().id(1L).build();
+
+        when(notificationService.getById(1L)).thenReturn(Optional.of(model));
+        when(notificationMapper.toDto(model)).thenReturn(dto);
+
+        Optional<NotificationDto> result = notificationFacadeImpl.getById(1L);
+
+        assertThat(result).isPresent();
+        assertThat(result.get().getId()).isEqualTo(1L);
+    }
+
+    @Test
     void createNotification_shouldDelegateAndMap() {
         Notification model = Notification.builder().id(1L).message("Hello").build();
         NotificationDto outputDto = NotificationDto.builder().id(1L).message("Hello").build();

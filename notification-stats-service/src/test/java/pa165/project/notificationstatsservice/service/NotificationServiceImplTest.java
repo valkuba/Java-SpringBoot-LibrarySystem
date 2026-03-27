@@ -29,7 +29,7 @@ class NotificationServiceImplTest {
     private NotificationServiceImpl notificationServiceImpl;
 
     @Test
-    void getAllNotifications() {
+    void getAllNotifications_shouldReturnAllNotifications() {
         List<Notification> notifications = new ArrayList<>();
         notifications.add(new Notification());
 
@@ -39,7 +39,7 @@ class NotificationServiceImplTest {
     }
 
     @Test
-    void getById() {
+    void getById_shouldReturnNotification() {
         Notification notification = new Notification();
         when(notificationRepository.findById(any())).thenReturn(Optional.of(notification));
 
@@ -47,6 +47,15 @@ class NotificationServiceImplTest {
 
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(notification);
+    }
+
+    @Test
+    void getById_whenNotFound_shouldReturnEmpty() {
+        when(notificationRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Optional<Notification> result = notificationServiceImpl.getById(99L);
+        
+        assertThat(result).isEmpty();
     }
 
     @Test

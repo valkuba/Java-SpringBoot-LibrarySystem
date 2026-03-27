@@ -25,7 +25,7 @@ class StatsServiceImplTest {
     private StatsServiceImpl statsServiceImpl;
 
     @Test
-    void getAllStats() {
+    void getAllStats_shouldReturnAllStats() {
         List<Stats> stats = List.of(Stats.builder().bookTitle("Last wish").returned(true).build());
         when(statsRepository.findAll()).thenReturn(stats); // mock the repository to return the list of stats
 
@@ -87,6 +87,18 @@ class StatsServiceImplTest {
         Map<String, Long> result = statsServiceImpl.getTopNBooks(5);
 
         assertThat(result).hasSize(0);
+    }
+
+    @Test
+    void getTopNBooks_whenLimitExceedsData_shouldReturnAll() {
+        List<Stats> stats = List.of(
+                Stats.builder().bookTitle("Blood of elves").returned(true).build()
+        );
+        when(statsRepository.findAll()).thenReturn(stats);
+
+        Map<String, Long> result = statsServiceImpl.getTopNBooks(100);
+
+        assertThat(result).hasSize(1); // only 1 book exists
     }
 
 }

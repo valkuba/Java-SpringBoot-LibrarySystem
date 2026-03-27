@@ -49,6 +49,17 @@ class NotificationRestControllerTest {
     }
 
     @Test
+    void getById_whenFound_shouldReturn200() throws Exception {
+        NotificationDto dto = NotificationDto.builder().id(1L).message("Test").build();
+
+        when(notificationFacade.getById(1L)).thenReturn(Optional.of(dto));
+
+        mockMvc.perform(get("/api/notifications/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L));
+    }
+
+    @Test
     void createNotification_withBlankMessage_shouldReturn400() throws Exception {
         CreateNotificationDto dto = CreateNotificationDto.builder()
                 .message("")
