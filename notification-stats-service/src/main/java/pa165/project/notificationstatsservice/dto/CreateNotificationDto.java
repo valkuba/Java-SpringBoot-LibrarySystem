@@ -9,10 +9,10 @@ import jakarta.validation.constraints.Email;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /* *
- * DTO for creating a new notification.
- * Contains only fields provided by the caller.
- * Fields like id, status, and createdAt are generated server-side.
+ * DTO for creating a new notification
+ * Contains only fields provided by the caller others are generated server side
  * */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -6,9 +6,10 @@ import pa165.project.notificationstatsservice.model.Notification;
 import org.mapstruct.Mapper;
 
 /* *
- * Mapper class for converting between Notification and NotificationDto.
- * Uses Mapper annotation for Bean creation.
+ * Mapper class for converting between Notification and NotificationDto
+ * Uses Mapper annotation for Bean creation
  * */
+
 @Mapper(componentModel = "spring")
 public class NotificationMapper {
     public NotificationDto toDto(Notification notification) {

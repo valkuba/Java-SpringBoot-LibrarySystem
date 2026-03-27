@@ -7,6 +7,7 @@ import java.util.Optional;
 /* *
  * Interface defining Methods of the Notification Repository
  * */
+
 public interface NotificationRepository {
     List<Notification> findAll();
     Optional<Notification> findById(Long id);
