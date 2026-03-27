@@ -2,8 +2,6 @@ package pa165.project.bookservice.rest;
 
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
@@ -26,9 +24,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BookRestControllerTest {
-    // Logger for debugging
-    // Now all log comments are commented, but they were helpful in implementation of these tests
-    private static final Logger log = LoggerFactory.getLogger(BookRestControllerTest.class);
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,8 +49,6 @@ public class BookRestControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        //log.info("getAllBooks response: {}", response);
-
         List<BookDto> books = objectMapper.readValue(response,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, BookDto.class));
         assertThat("books", books, is(notNullValue()));
@@ -70,8 +63,6 @@ public class BookRestControllerTest {
         String response = mockMvc.perform(get("/api/books/{id}", createdId))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-        //log.info("getBookById response: {}", response);
 
         BookDto foundBook = objectMapper.readValue(response, BookDto.class);
         assertThat("title", foundBook.getTitle(), is(equalTo(bookDto.getTitle())));
@@ -89,8 +80,6 @@ public class BookRestControllerTest {
         BookDto bookDto = TestDataFactory.bookDtos.get(0);
 
         BookDto createdBook = createBookHelper(bookDto);
-
-        //log.info("createBook response: {}", createdBook);
 
         assertThat("title", createdBook.getTitle(), is(equalTo(bookDto.getTitle())));
         assertThat("author", createdBook.getAuthor(), is(equalTo(bookDto.getAuthor())));
@@ -126,8 +115,6 @@ public class BookRestControllerTest {
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
-        //log.info("updateBook response: {}", response);
-
         BookDto updatedBook = objectMapper.readValue(response, BookDto.class);
         assertThat("title", updatedBook.getTitle(), is(equalTo(updatedBookDto.getTitle())));
         assertThat("author", updatedBook.getAuthor(), is(equalTo(updatedBookDto.getAuthor())));
@@ -158,8 +145,6 @@ public class BookRestControllerTest {
                         .param("title", title))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
-
-        //log.info("searchBooks response: {}", response);
 
         List<BookDto> books = objectMapper.readValue(response, objectMapper.getTypeFactory().constructCollectionType(List.class, BookDto.class));
         assertThat("books size", books.size(), is(greaterThan(0)));
