@@ -7,7 +7,8 @@ import java.util.List;
 /* *
  * Interface for the StatsFacade
  * */
+
 public interface StatsFacade {
     List<StatsDto> getAllStats();
-    public List<PopularBookDto> getTopNBooks(int limit);
+    List<PopularBookDto> getTopNBooks(int limit);
 }

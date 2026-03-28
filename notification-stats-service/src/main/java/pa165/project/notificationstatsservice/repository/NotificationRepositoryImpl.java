@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 /* *
  * Implementation of the Repository methods defined by interface.
  * */
+
 @Repository
 public class NotificationRepositoryImpl implements NotificationRepository {
     private final HashMap<Long, Notification> notifications = new HashMap<>();
