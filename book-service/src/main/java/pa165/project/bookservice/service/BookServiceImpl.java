@@ -30,6 +30,7 @@ public class BookServiceImpl implements BookService {
          if (!validateISBN(book.getIsbn())) {
             throw new IllegalArgumentException("Invalid ISBN: " + book.getIsbn());
         }
+         book.setId(null);
 
         return bookRepository.save(book);
     }

@@ -22,7 +22,13 @@ Project is based on the Spring Boot framework.
 
 ## Executable Modules
 The project consists of the following independently runnable Spring Boot modules:
-TODO...
+
+| Module | Port | Swagger UI |
+|--------|------|------------|
+| `book-service` | 8080 | http://localhost:8080/swagger-ui/index.html |
+| `lending-service` | 8081 | http://localhost:8081/swagger-ui/index.html |
+| `member-service` | 8082 | http://localhost:8082/swagger-ui/index.html |
+| `notification-stats-service` | 8083 | http://localhost:8083/swagger-ui/index.html |
 
 ---
 
@@ -35,9 +41,7 @@ mvn clean install
 cd book-service
 mvn spring-boot:run
 ```
-Then you can see for yourself that the service is up and running by for example entering this URL into your
-browser http://localhost:8080/swagger-ui/index.html#/Book/searchBooks
-On the URL is based the Swagger-UI with the documentation of the REST API endpoints.
+Each service exposes its REST API documentation via Swagger UI at the URL listed above.
 
 ---
 
@@ -61,8 +65,6 @@ The microservices in the project are following:
    - generating reports for librarians on books popularity
    - handling notifications for overdue books
    - informing librarians when specific administrative actions are required
-
-TODO: Who wil do what
 
 ---
 
@@ -92,11 +94,16 @@ TODO: Who wil do what
 - `ReservationDto` — id, memberId, bookId, reservationDate, whenAvailableDate, status
 - `FineDto` — id, memberId, loanId, date, amount, status
 
-**Notification Service**
-- `NotificationDto` — id, message, recipientEmail
+**Notification and Statistics Service**
+- `NotificationDto` — id, message, recipientEmail, createdAt
+- `CreateNotificationDto` — message, recipientEmail
+- `StatsDto` — id, bookTitle, returned
+- `PopularBookDto` — bookTitle, borrowCount
 
 ---
 
 ## GenAI Usage
-TODO...
+GenAI (ChatGPT, Claude Sonnet) was used for brainstorming architecture ideas and generating boilerplate code examples. 
+And also for checking test cases correctness. All code was reviewed, wrote and adjusted manually in the 
+IntelliJ IDEA IDE.
 
