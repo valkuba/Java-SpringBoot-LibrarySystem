@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 
 /* *
  * Model for Statistics
- *
  * */
 
 @Data

@@ -9,7 +9,7 @@ import pa165.project.notificationstatsservice.service.StatsService;
 import java.util.List;
 
 /* *
- * Implementation of the StatsFacade interface, responsible for handling business logic related to statistics.
+ * Implementation of the StatsFacade interface, responsible for handling business logic related to statistics
  * */
 
 @Component

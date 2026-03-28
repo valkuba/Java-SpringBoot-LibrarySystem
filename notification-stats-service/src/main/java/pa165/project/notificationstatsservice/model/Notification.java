@@ -7,9 +7,9 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 /* *
- * Class for Model of the notification.
- * Thanks to lombok no need to manually write getters, setters, constructors, builder etc.
+ * Class for Model of the notification
  * */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

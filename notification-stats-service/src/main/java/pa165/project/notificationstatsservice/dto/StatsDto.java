@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 /* *
  * DTO representing a borrowing record used for statistics
- * Contains information about book borrowing transactions
  * */
 
 @Data

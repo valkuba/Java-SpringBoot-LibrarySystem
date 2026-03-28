@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -17,6 +18,7 @@ public class Member {
     private String email;
     private String password;
     private Date registrationDate;
+//    private Date registrationDate;
     private boolean activated = false;
 
     public void validateChanges(Member changed) throws MemberUpdateException {
