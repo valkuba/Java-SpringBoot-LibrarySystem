@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pa165.project.lendingservice.model.Fine;
-import pa165.project.lendingservice.repository.FineRepositoryImpl;
+import pa165.project.lendingservice.repository.FineRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class FineServiceImplTests {
 
     @Mock
-    private FineRepositoryImpl fineRepository;
+    private FineRepository fineRepository;
 
     @InjectMocks
     private FineServiceImpl fineService;
@@ -102,7 +102,7 @@ public class FineServiceImplTests {
     @Test
     public void updateFine_existingFine_returnsUpdatedFine() {
         var fine = Fine.builder().id(1L).status("PAID").build();
-        Mockito.when(fineRepository.update(fine)).thenReturn(fine);
+        Mockito.when(fineRepository.save(fine)).thenReturn(fine);
 
         var updatedFine = fineService.updateFine(fine);
 

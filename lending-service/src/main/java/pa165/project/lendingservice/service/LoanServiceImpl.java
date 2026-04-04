@@ -32,7 +32,7 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public Loan createLoan(Loan loan) {
-        long activeLoans = loanRepository.countActiveLoansByMember(loan.getMemberId());
+        long activeLoans = loanRepository.countActiveLoansByMemberId(loan.getMemberId());
         if(activeLoans >= LoanConstants.MAX_ACTIVE_LOANS){
             throw new RuntimeException("Member has reached maximum active loans");
         }
@@ -67,12 +67,15 @@ public class LoanServiceImpl implements LoanService {
 
         double fineAmount = calculateFine(loan.getDueDate(), actualReturnDate);
 
-        if(fineAmount > 0){
-            Fine fine = new Fine();
-            fine.setLoanId(loan.getId());
-            fine.setMemberId(loan.getMemberId());
-            fine.setAmount(fineAmount);
-            fine.setStatus("UNPAID");
+        if (fineAmount > 0) {
+            Fine fine = Fine.builder()
+                    .loanId(loan.getId())
+                    .memberId(loan.getMemberId())
+                    .amount(fineAmount)
+                    .date(actualReturnDate)
+                    .status("UNPAID")
+                    .build();
+            fineRepository.save(fine);
         }
 
         return loanRepository.save(loan);

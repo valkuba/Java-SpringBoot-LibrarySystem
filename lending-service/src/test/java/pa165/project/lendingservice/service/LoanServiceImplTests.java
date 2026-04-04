@@ -6,13 +6,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pa165.project.lendingservice.model.Fine;
 import pa165.project.lendingservice.model.Loan;
-import pa165.project.lendingservice.repository.FineRepository;
 import pa165.project.lendingservice.repository.LoanRepository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,16 +61,16 @@ public class LoanServiceImplTests {
 
     @Test
     public void createLoan_memberBelowMaxActiveLoans_savesAndReturnsLoan() {
-        Mockito.when(loanRepository.countActiveLoansByMember(1L)).thenReturn(2L);
+        Mockito.when(loanRepository.countActiveLoansByMemberId(1L)).thenReturn(2L);
 
-        var loansCount = loanRepository.countActiveLoansByMember(1L);
+        var loansCount = loanRepository.countActiveLoansByMemberId(1L);
 
         assertThat(loansCount).isEqualTo(2);
     }
 
     @Test
     public void createLoan_memberAtMaxActiveLoans_throwsRuntimeException() {
-        Mockito.when(loanRepository.countActiveLoansByMember(1L)).thenThrow(new RuntimeException());
+        Mockito.when(loanRepository.countActiveLoansByMemberId(1L)).thenThrow(new RuntimeException());
 
         assertThatThrownBy(()->loanService.createLoan(Loan.builder().build())).isInstanceOf(RuntimeException.class);
     }
