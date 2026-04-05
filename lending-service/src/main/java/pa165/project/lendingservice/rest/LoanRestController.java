@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.facade.LoanFacade;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -45,6 +46,13 @@ public class LoanRestController {
     public ResponseEntity<LoanDto> updateLend(@PathVariable Long id,
                                               @Valid @RequestBody LoanDto loanDto) {
         return ResponseEntity.ok(loanFacade.updateLend(id, loanDto));
+    }
+
+    @PutMapping("/{id}/return")
+    @Operation(summary = "Return a loan")
+    public ResponseEntity<LoanDto> returnLoan(@PathVariable Long id,
+                                              @RequestParam LocalDate returnDate) {
+        return ResponseEntity.ok(loanFacade.returnLend(id, returnDate));
     }
 
     @DeleteMapping("/{id}")

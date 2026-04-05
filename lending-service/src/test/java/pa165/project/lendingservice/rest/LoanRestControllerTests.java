@@ -15,6 +15,7 @@ import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -123,6 +124,27 @@ public class LoanRestControllerTests {
 
         assertThat(response).isNotNull();
         assertThat(response.getId()).isEqualTo(1L);
+    }
+
+    @Test
+    public void returnLoan_existingId_returnsOk() throws Exception {
+        var returnDate = LocalDate.of(2026, 2, 1);
+        Mockito.when(loanFacade.returnLend(eq(1L), eq(returnDate)))
+                .thenReturn(LoanDto.builder().id(1L).returnDate(returnDate).status("RETURNED").build());
+
+        var responseJson = mockMvc.perform(put("/api/loans/{id}/return", 1L)
+                        .param("returnDate", returnDate.toString())
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+        var response = jsonMapper.readValue(responseJson, LoanDto.class);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getId()).isEqualTo(1L);
+        assertThat(response.getStatus()).isEqualTo("RETURNED");
     }
 
     @Test

@@ -92,6 +92,20 @@ public class LoanFacadeImplTests {
     }
 
     @Test
+    public void returnLend_loanWithOverdue_returnsMappedDto() {
+        var returnDate = LocalDate.of(2026, 2, 1);
+        var loan = Loan.builder().id(1L).memberId(1L).dueDate(LocalDate.of(2026, 1, 15)).build();
+        var dto = LoanDto.builder().id(1L).returnDate(returnDate).status("RETURNED").build();
+        Mockito.when(loanService.returnLoan(1L, returnDate)).thenReturn(loan);
+        Mockito.when(loanMapper.toDto(loan)).thenReturn(dto);
+
+        var result = loanFacade.returnLend(1L, returnDate);
+
+        assertThat(result.getId()).isEqualTo(1L);
+        assertThat(result.getReturnDate()).isEqualTo(returnDate);
+    }
+
+    @Test
     public void deleteLend_existingId_callsServiceDeleteLoan() {
         loanFacade.deleteLend(1L);
 

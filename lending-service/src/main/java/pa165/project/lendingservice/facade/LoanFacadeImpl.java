@@ -6,6 +6,7 @@ import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.mappers.LoanMapper;
 import pa165.project.lendingservice.service.LoanService;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +37,11 @@ public class LoanFacadeImpl implements LoanFacade {
     @Override
     public LoanDto updateLend(Long id, LoanDto loanDto) {
         return loanMapper.toDto(loanService.updateLoan(id, loanMapper.toModel(loanDto)));
+    }
+
+    @Override
+    public LoanDto returnLend(Long id, LocalDate returnDate) {
+        return loanMapper.toDto(loanService.returnLoan(id, returnDate));
     }
 
     @Override
