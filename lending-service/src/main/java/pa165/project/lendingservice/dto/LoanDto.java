@@ -16,7 +16,6 @@ import java.time.LocalDate;
 public class LoanDto {
 
     @Schema(description = "Unique identifier of the loan")
-    @NotNull
     private Long id;
 
     @Schema(description = "Unique identifier of member")

@@ -101,6 +101,13 @@ public class FineRepositoryTests {
     }
 
     @Test
+    void findByStatus_returnsUnpaidFines() {
+        var result = fineRepository.findByStatus("UNPAID");
+
+        assertThat(result).hasSize(2);
+    }
+
+    @Test
     void update_existingFine_updatesFields() {
         fine1.setAmount(99.0);
         fine1.setStatus("PAID");
