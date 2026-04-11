@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pa165.project.bookservice.model.Book;
-import pa165.project.bookservice.repository.BookRepositoryImpl;
+import pa165.project.bookservice.repository.BookRepository;
 import pa165.project.bookservice.util.TestDataFactory;
 
 import java.util.Collections;
@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 public class BookServiceTest {
     @Mock
-    private BookRepositoryImpl bookRepository;
+    private BookRepository bookRepository;
     @InjectMocks
     private BookServiceImpl bookService;
 
