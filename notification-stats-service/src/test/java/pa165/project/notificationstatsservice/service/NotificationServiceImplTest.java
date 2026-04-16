@@ -63,17 +63,17 @@ class NotificationServiceImplTest {
         Notification input = Notification.builder()
                 .message("Hello").recipientEmail("test@gmail.com").build();
 
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> i.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createNotification(input);
 
         assertThat(result.getCreatedAt()).isNotNull();
-        verify(notificationRepository).saveNotification(input);
+        verify(notificationRepository).save(input);
     }
 
     @Test
     void createOverdueNotification_shouldContainBookTitle() {
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> {
+        when(notificationRepository.save(any())).thenAnswer(i -> {
                 Notification n = i.getArgument(0);
                 n.setId(1L);
                 return n;
@@ -89,7 +89,7 @@ class NotificationServiceImplTest {
 
     @Test
     void createOverdueNotification_shouldContainOverdueWord() {
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> i.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl
                 .createOverdueNotification("test@gmail.com", "Blood of the elves");

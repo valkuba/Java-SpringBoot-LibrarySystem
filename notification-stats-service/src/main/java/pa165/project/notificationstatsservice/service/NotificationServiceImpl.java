@@ -31,7 +31,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Override
     public Notification createNotification(Notification notification) {
         notification.setCreatedAt(LocalDateTime.now());
-        return notificationRepository.saveNotification(notification);
+        return notificationRepository.save(notification);
     }
 
     @Override
