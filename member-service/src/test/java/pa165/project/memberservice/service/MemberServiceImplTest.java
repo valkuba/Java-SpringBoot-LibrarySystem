@@ -4,11 +4,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pa165.project.memberservice.model.Member;
-import pa165.project.memberservice.model.MemberUpdateException;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
 import pa165.project.memberservice.repository.MemberRepository;
-import pa165.project.memberservice.repository.MemberRepositoryException;
+import pa165.project.memberservice.service.exception.MemberServiceException;
 
 import java.util.Date;
 import java.util.List;
@@ -41,13 +42,13 @@ class MemberServiceImplTest {
     void registerMember_shouldRegisterMember() throws Exception {
         Member member = createTestMember();
 
-        doNothing().when(memberRepository).register(member);
+        when(memberRepository.save(member)).thenReturn(member);
 
         Member result = memberService.registerMember(member);
 
         assertNotNull(result);
         assertEquals(member.getUsername(), result.getUsername());
-        verify(memberRepository).register(member);
+        verify(memberRepository).save(member);
     }
 
     @Test
@@ -60,41 +61,37 @@ class MemberServiceImplTest {
                 .registrationDate(new Date())
                 .build();
 
-        doThrow(new MemberRepositoryException("Username is required"))
+        doThrow(new MemberServiceException("Username is required"))
                 .when(memberRepository)
-                .register(invalidMember);
+                .save(invalidMember);
 
-        assertThrows(MemberRepositoryException.class, () -> {
+        assertThrows(MemberServiceException.class, () -> {
             memberService.registerMember(invalidMember);
         });
 
-        verify(memberRepository).register(invalidMember);
+        verify(memberRepository).save(invalidMember);
     }
 
     @Test
     void activateMember_shouldCallRepository() throws Exception {
         Long id = 1L;
+        var member = createTestMember();
+        when(memberRepository.save(member)).thenReturn(member);
 
-        doNothing().when(memberRepository).activateUser(id);
+        when(memberRepository.findById(id)).thenReturn(Optional.of(member));
 
         memberService.activateMember(id);
 
-        verify(memberRepository).activateUser(id);
+        verify(memberRepository).save(Mockito.any());
     }
 
     @Test
     void activateMemberInvalidId_shouldCallRepository_shouldThrow() throws Exception {
-        Long invalidId = null;
-
-        doThrow(new MemberRepositoryException("Id is required"))
-                .when(memberRepository)
-                .activateUser(invalidId);
-
-        assertThrows(MemberRepositoryException.class, () -> {
-            memberService.activateMember(invalidId);
+        assertThrows(MemberServiceException.class, () -> {
+            memberService.activateMember(null);
         });
 
-        verify(memberRepository).activateUser(invalidId);
+        verify(memberRepository, never()).save(Mockito.any());
     }
 
     @Test
@@ -132,24 +129,26 @@ class MemberServiceImplTest {
     void updateMember_shouldUpdateMember() throws Exception {
         Member member = createTestMember();
 
-        when(memberRepository.update(member)).thenReturn(member);
+        when(memberRepository.save(member)).thenReturn(member);
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
         Member result = memberService.updateMember(member);
 
         assertNotNull(result);
-        verify(memberRepository).update(member);
+        verify(memberRepository).save(member);
     }
 
     @Test
     void updateMember_invalidChange_shouldThrowMemberUpdateException() throws Exception {
+        Member original = createTestMember();
         Member memberToUpdate = createTestMember();
-        memberToUpdate.setId(2L);
+        memberToUpdate.setActivated(true);
 
-        doThrow(new MemberUpdateException("Cannot change member's id"))
-                .when(memberRepository).update(memberToUpdate);
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(original));
 
         assertThrows(MemberUpdateException.class, () -> memberService.updateMember(memberToUpdate));
-        verify(memberRepository).update(memberToUpdate);
+        verify(memberRepository, never()).save(any());
     }
 
     @Test

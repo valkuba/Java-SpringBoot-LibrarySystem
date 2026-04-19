@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberService {
     public void activateMember(Long id) throws MemberServiceException {
         var memberOpt = memberRepository.findById(id);
         if(memberOpt.isEmpty()){
-            throw new MemberAlreadyActivatedException(id);
+            throw new MemberDoesntExistsException(id);
         }
         var member = memberOpt.get();
         member.setActivated(true);
