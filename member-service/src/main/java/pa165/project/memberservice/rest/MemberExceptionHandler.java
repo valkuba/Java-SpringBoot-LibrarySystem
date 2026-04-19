@@ -5,8 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import pa165.project.memberservice.model.exception.MemberUpdateException;
-import pa165.project.memberservice.repository.exception.MemberIdAlreadyExistsException;
-import pa165.project.memberservice.repository.exception.MemberRepositoryException;
+import pa165.project.memberservice.service.exception.MemberIdAlreadyExistsException;
+import pa165.project.memberservice.service.exception.MemberServiceException;
 
 @RestControllerAdvice
 public class MemberExceptionHandler {
@@ -16,8 +16,8 @@ public class MemberExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("could not create member");
     }
 
-    @ExceptionHandler(MemberRepositoryException.class)
-    public ResponseEntity<String> handleMemberRepository(MemberRepositoryException e) {
+    @ExceptionHandler(MemberServiceException.class)
+    public ResponseEntity<String> handleMemberRepository(MemberServiceException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
 
