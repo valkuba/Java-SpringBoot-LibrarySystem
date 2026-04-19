@@ -1,7 +1,8 @@
 package pa165.project.memberservice.repository;
 
 import pa165.project.memberservice.model.Member;
-import pa165.project.memberservice.model.MemberUpdateException;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
+import pa165.project.memberservice.repository.exception.MemberRepositoryException;
 
 import java.util.List;
 import java.util.Optional;

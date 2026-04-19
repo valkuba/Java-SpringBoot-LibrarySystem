@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
 
 import java.util.Date;
 

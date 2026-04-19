@@ -1,11 +1,11 @@
 package pa165.project.memberservice.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pa165.project.memberservice.model.Member;
-import pa165.project.memberservice.model.MemberUpdateException;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
 import pa165.project.memberservice.repository.*;
+import pa165.project.memberservice.repository.exception.MemberRepositoryException;
 
 import java.util.List;
 import java.util.Optional;

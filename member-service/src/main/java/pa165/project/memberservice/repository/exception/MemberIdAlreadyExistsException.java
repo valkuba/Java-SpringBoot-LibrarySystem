@@ -1,4 +1,4 @@
-package pa165.project.memberservice.repository;
+package pa165.project.memberservice.repository.exception;
 
 public class MemberIdAlreadyExistsException extends MemberRepositoryException {
     public MemberIdAlreadyExistsException(Long id) {

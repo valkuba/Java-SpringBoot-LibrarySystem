@@ -4,9 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import pa165.project.memberservice.model.MemberUpdateException;
-import pa165.project.memberservice.repository.MemberIdAlreadyExistsException;
-import pa165.project.memberservice.repository.MemberRepositoryException;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
+import pa165.project.memberservice.repository.exception.MemberIdAlreadyExistsException;
+import pa165.project.memberservice.repository.exception.MemberRepositoryException;
 
 @RestControllerAdvice
 public class MemberExceptionHandler {

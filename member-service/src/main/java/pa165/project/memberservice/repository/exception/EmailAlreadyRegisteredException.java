@@ -1,4 +1,4 @@
-package pa165.project.memberservice.repository;
+package pa165.project.memberservice.repository.exception;
 
 public class EmailAlreadyRegisteredException extends RuntimeException {
     public EmailAlreadyRegisteredException(String email) {

@@ -2,7 +2,8 @@ package pa165.project.memberservice.repository;
 
 import org.springframework.stereotype.Repository;
 import pa165.project.memberservice.model.Member;
-import pa165.project.memberservice.model.MemberUpdateException;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
+import pa165.project.memberservice.repository.exception.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
