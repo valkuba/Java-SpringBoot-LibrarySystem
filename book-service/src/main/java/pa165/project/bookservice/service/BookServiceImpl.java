@@ -30,6 +30,7 @@ public class BookServiceImpl implements BookService {
          if (!validateISBN(book.getIsbn())) {
             throw new IllegalArgumentException("Invalid ISBN: " + book.getIsbn());
         }
+         book.setId(null);
 
         return bookRepository.save(book);
     }
@@ -76,9 +77,9 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<Book> searchBooks(String title, String author, String genre) {
         return bookRepository.findAll().stream()
-                .filter(b -> title == null || b.getTitle().toLowerCase().contains(title)) // null -> ignore filter
-                .filter(b -> author == null || b.getAuthor().toLowerCase().contains(author))
-                .filter(b -> genre == null || b.getGenre().toLowerCase().contains(genre))
+                .filter(b -> title == null || b.getTitle().toLowerCase().contains(title.toLowerCase())) // null -> ignore filter
+                .filter(b -> author == null || b.getAuthor().toLowerCase().contains(author.toLowerCase()))
+                .filter(b -> genre == null || b.getGenre().toLowerCase().contains(genre.toLowerCase()))
                 .collect(Collectors.toList());
     }
 }

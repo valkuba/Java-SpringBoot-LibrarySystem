@@ -10,10 +10,10 @@ import pa165.project.notificationstatsservice.model.Notification;
 import java.time.LocalDateTime;
 
 /* *
- * DTO representing a notification returned by the API.
- * Used as a response object in REST endpoints.
- * Only for reading, so no validation needed.
+ * DTO for notification returned by the API
+ * Only for reading, so no validation needed
  * */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
