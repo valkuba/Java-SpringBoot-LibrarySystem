@@ -2,6 +2,7 @@ package pa165.project.notificationstatsservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pa165.project.notificationstatsservice.model.Stats;
 import pa165.project.notificationstatsservice.repository.StatsRepository;
 import java.util.LinkedHashMap;
@@ -19,12 +20,14 @@ import java.util.stream.Collectors;
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
 
+    @Transactional(readOnly = true)
     @Override
     public List<Stats> getAllStats() {
         return statsRepository.findAll();
     }
 
     // Returns HashMap of a bookTitles and amount of borrowings for each one
+    @Transactional(readOnly = true)
     @Override
     public Map<String, Long> getTopNBooks(int limit) {
         List<Stats> allRecords = statsRepository.findAll();
