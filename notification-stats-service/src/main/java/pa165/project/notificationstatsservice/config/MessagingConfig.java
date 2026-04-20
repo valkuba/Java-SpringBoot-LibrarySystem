@@ -1,4 +1,4 @@
-package config;
+package pa165.project.notificationstatsservice.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,9 +13,9 @@ public class MessagingConfig {
 
     @Bean
     public MessageConverter messageConverter() {
-        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setTargetType(MessageType.TEXT);
-        messageConverter.setTypeIdPropertyName("_type");
-        return messageConverter;
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+        converter.setTargetType(MessageType.TEXT);
+        converter.setTypeIdPropertyName("_type");
+        return converter;
     }
 }

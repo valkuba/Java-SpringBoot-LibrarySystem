@@ -1,18 +1,16 @@
 services:
   artemis:
-    image: apache/activemq-artemis:2.53.0
+    image: apache/artemis:2.53.0
     container_name: artemis
     ports:
       - "61616:61616"
       - "8161:8161"
-    environment:
-      ARTEMIS_USER: admin
-      ARTEMIS_PASSWORD: admin
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8161 || exit 1"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "/var/lib/artemis-instance/bin/artemis check node --user artemis --password artemis || exit 1"]
+      interval: 15s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
   notification-stats-service:
     build:
@@ -23,8 +21,8 @@ services:
     environment:
       SPRING_ARTEMIS_MODE: native
       SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
-      SPRING_ARTEMIS_USER: admin
-      SPRING_ARTEMIS_PASSWORD: admin
+      SPRING_ARTEMIS_USER: artemis
+      SPRING_ARTEMIS_PASSWORD: artemis
     depends_on:
       artemis:
         condition: service_healthy

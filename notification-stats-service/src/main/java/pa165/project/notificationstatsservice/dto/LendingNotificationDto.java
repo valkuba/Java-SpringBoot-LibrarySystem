@@ -1,11 +1,36 @@
+package pa165.project.notificationstatsservice.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+
+/* *
+ * One dto for async communication, the type decides what is needed to be passed
+ *
+ */
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LendingNotificationDto {
-    private String type;                // "OVERDUE", "FINE_ISSUED", "RESERVATION_READY"
+
+    public enum NotificationType {
+        OVERDUE,
+        FINE_ISSUED,
+        RESERVATION_READY
+    }
+
+    private NotificationType type;
+
     private String recipientEmail;
+
     private String bookTitle;
-    private LocalDate dueDate;          // OVERDUE
-    private Double fineAmount;          // FINE_ISSUED
-    private LocalDate whenAvailableDate; // RESERVATION_READY
+
+    private LocalDate dueDate;
+
+    private Double fineAmount;
+
+    private LocalDate whenAvailableDate;
 }

@@ -4,10 +4,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import pa165.project.notificationstatsservice.dto.CreateNotificationDto;
+import pa165.project.notificationstatsservice.dto.LendingNotificationDto;
 import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.facade.NotificationFacade;
 
@@ -63,5 +66,21 @@ public class NotificationRestController {
     @Operation(summary = "Get notifications sorted by date")
     public ResponseEntity<List<NotificationDto>> getAllSortedByDate() {
         return ResponseEntity.ok(notificationFacade.getAllSortedByDate());
+    }
+
+    // just a test producer, to try via the swagger ui if consumer work
+    @Autowired
+    private JmsTemplate jmsTemplate;
+
+    @PostMapping("/test-jms")
+    @Operation(summary = "Test JMS - send test message")
+    public ResponseEntity<String> testJms() {
+        LendingNotificationDto dto = new LendingNotificationDto();
+        dto.setType(LendingNotificationDto.NotificationType.OVERDUE);
+        dto.setRecipientEmail("test@example.com");
+        dto.setBookTitle("Clean Code");
+
+        jmsTemplate.convertAndSend("overdue.books", dto);
+        return ResponseEntity.ok("Message sent");
     }
 }
