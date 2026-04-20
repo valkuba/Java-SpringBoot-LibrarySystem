@@ -10,7 +10,6 @@ import pa165.project.bookservice.model.Book;
 import pa165.project.bookservice.repository.BookRepository;
 import pa165.project.bookservice.util.TestDataFactory;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;

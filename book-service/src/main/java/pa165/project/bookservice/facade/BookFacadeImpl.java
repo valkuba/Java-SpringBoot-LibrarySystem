@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pa165.project.bookservice.dto.BookDto;
 import pa165.project.bookservice.mappers.BookMapper;
-import pa165.project.bookservice.model.Book;
 import pa165.project.bookservice.service.BookService;
 
 import java.util.List;
