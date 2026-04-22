@@ -69,11 +69,20 @@ public class LoanServiceImplTests {
 
     @Test
     public void createLoan_memberBelowMaxActiveLoans_savesAndReturnsLoan() {
+        Loan loan = Loan.builder()
+                .memberId(1L)
+                .bookCopyId(1L)
+                .loanDate(LocalDate.now())
+                .dueDate(LocalDate.now().plusDays(10))
+                .build();
+
         Mockito.when(loanRepository.countActiveLoansByMemberId(1L)).thenReturn(2L);
+        Mockito.when(loanRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
-        var loansCount = loanRepository.countActiveLoansByMemberId(1L);
+        Loan result = loanService.createLoan(loan);
 
-        assertThat(loansCount).isEqualTo(2);
+        Mockito.verify(loanRepository).save(loan);
+        assertThat(result).isNotNull();
     }
 
     @Test
@@ -85,24 +94,31 @@ public class LoanServiceImplTests {
 
     @Test
     void createLoan_shouldSendMessageToProducer() {
-        Loan loan = Loan.builder()
+        Loan input = Loan.builder()
+                .memberId(5L)
+                .bookCopyId(10L)
+                .loanDate(LocalDate.of(2026, 4, 22))
+                .dueDate(LocalDate.of(2026, 5, 5))
+                .build();
+
+        Loan saved = Loan.builder()
                 .id(1L)
                 .memberId(5L)
                 .bookCopyId(10L)
-                .loanDate(LocalDate.now())
-                .dueDate(LocalDate.now().plusDays(14))
+                .loanDate(input.getLoanDate())
+                .dueDate(input.getDueDate())
                 .build();
 
         Mockito.when(loanRepository.countActiveLoansByMemberId(5L)).thenReturn(0L);
-        Mockito.when(loanRepository.save(Mockito.any())).thenReturn(loan);
+        Mockito.when(loanRepository.save(Mockito.any())).thenReturn(saved);
 
-        loanService.createLoan(loan);
+        loanService.createLoan(input);
 
         Mockito.verify(loanMessageProducer).sendLoanCreated(
                 1L,
                 5L,
                 10L,
-                LocalDate.now().toString()
+                "2026-04-22"
         );
     }
 
@@ -240,6 +256,12 @@ public class LoanServiceImplTests {
     public void calculateFine_returnOnDueDate_returnsZero() {
         var fine = loanService.calculateFine(LocalDate.now(), LocalDate.now());
         assertThat(fine).isEqualTo(0.0);
+    }
+
+    @Test
+    public void calculateFine_returnLate_returnsFineAmount() {
+        var fine = loanService.calculateFine(LocalDate.now().minusDays(2), LocalDate.now());
+        assertThat(fine).isEqualTo(10.0);
     }
 
 }

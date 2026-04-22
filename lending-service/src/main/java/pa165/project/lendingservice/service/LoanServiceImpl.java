@@ -1,7 +1,7 @@
 package pa165.project.lendingservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import pa165.project.lendingservice.config.LoanConstants;
 import pa165.project.lendingservice.messaging.LoanMessageProducer;
@@ -36,7 +36,7 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public Loan createLoan(Loan loan) {
         long activeLoans = loanRepository.countActiveLoansByMemberId(loan.getMemberId());
-        if(activeLoans >= LoanConstants.MAX_ACTIVE_LOANS){
+        if (activeLoans >= LoanConstants.MAX_ACTIVE_LOANS) {
             throw new RuntimeException("Member has reached maximum active loans");
         }
 
@@ -72,7 +72,9 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @Transactional
     public Loan returnLoan(Long loanId, LocalDate actualReturnDate) {
+
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
@@ -88,15 +90,17 @@ public class LoanServiceImpl implements LoanService {
                     .date(actualReturnDate)
                     .status("UNPAID")
                     .build();
+
             fineRepository.save(fine);
 
             loanMessageProducer.sendFineIssued(
                     loan.getId(),
                     loan.getMemberId(),
                     fine.getAmount(),
-                    fine.getDate().toString()
+                    actualReturnDate.toString()
             );
         }
+
         Loan saved = loanRepository.save(loan);
 
         loanMessageProducer.sendLoanReturned(
@@ -110,7 +114,6 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public double calculateFine(LocalDate dueDate, LocalDate returnDate) {
-        // TODO: figure out the fine amount per day
         if (returnDate.isAfter(dueDate)) {
             long daysLate = ChronoUnit.DAYS.between(dueDate, returnDate);
             return daysLate * LoanConstants.FINE_PER_DAY;

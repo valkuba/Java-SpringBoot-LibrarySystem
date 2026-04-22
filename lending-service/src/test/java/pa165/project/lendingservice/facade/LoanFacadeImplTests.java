@@ -7,9 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import pa165.project.lendingservice.dto.LoanDto;
-import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.mappers.LoanMapper;
-import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.service.LoanService;
 
@@ -44,7 +42,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanMapper.toDto(loan2)).thenReturn(dto2);
         Mockito.when(loanMapper.toDto(loan3)).thenReturn(dto3);
 
-        var result = loanFacade.getAllLends();
+        var result = loanFacade.getAllLoans();
 
         assertThat(result).hasSize(3);
         assertThat(result).extracting(LoanDto::getId).containsExactlyInAnyOrder(1L, 2L, 3L);
@@ -55,7 +53,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanMapper.toDto(Mockito.any())).thenReturn(LoanDto.builder().id(1L).build());
         Mockito.when(loanService.getLoanById(1L)).thenReturn(Optional.of(Loan.builder().id(1L).build()));
 
-        var result = loanFacade.getLendById(1L);
+        var result = loanFacade.getLoanById(1L);
 
         assertThat(result).isPresent();
         assertThat(result.get().getId()).isEqualTo(1L);
@@ -65,7 +63,7 @@ public class LoanFacadeImplTests {
     public void getLendById_nonExistingId_returnsEmpty() {
         Mockito.when(loanService.getLoanById(1L)).thenReturn(Optional.empty());
 
-        var result =  loanFacade.getLendById(1L);
+        var result =  loanFacade.getLoanById(1L);
         assertThat(result).isEmpty();
     }
 
@@ -74,7 +72,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanMapper.toDto(Mockito.any())).thenReturn(LoanDto.builder().id(1L).build());
         Mockito.when(loanService.createLoan(Mockito.any())).thenReturn(Loan.builder().id(1L).build());
 
-        var result = loanFacade.createLend(LoanDto.builder().id(1L).build());
+        var result = loanFacade.createLoan(LoanDto.builder().id(1L).build());
 
         assertThat(result.getId()).isEqualTo(1L);
     }
@@ -85,7 +83,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanMapper.toDto(Mockito.any())).thenReturn(LoanDto.builder().id(1L).dueDate(date).build());
         Mockito.when(loanService.updateLoan(Mockito.eq(1L), Mockito.any())).thenReturn(Loan.builder().id(1L).dueDate(date).build());
 
-        var result = loanFacade.updateLend(1L,LoanDto.builder().id(1L).build());
+        var result = loanFacade.updateLoan(1L,LoanDto.builder().id(1L).build());
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getDueDate()).isEqualTo(date);
@@ -99,7 +97,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanService.returnLoan(1L, returnDate)).thenReturn(loan);
         Mockito.when(loanMapper.toDto(loan)).thenReturn(dto);
 
-        var result = loanFacade.returnLend(1L, returnDate);
+        var result = loanFacade.returnLoan(1L, returnDate);
 
         assertThat(result.getId()).isEqualTo(1L);
         assertThat(result.getReturnDate()).isEqualTo(returnDate);
@@ -107,7 +105,7 @@ public class LoanFacadeImplTests {
 
     @Test
     public void deleteLend_existingId_callsServiceDeleteLoan() {
-        loanFacade.deleteLend(1L);
+        loanFacade.deleteLoan(1L);
 
         Mockito.verify(loanService).deleteLoan(1L);
     }
@@ -119,7 +117,7 @@ public class LoanFacadeImplTests {
         Mockito.when(loanService.searchLoans(1L,2L)).thenReturn(List.of(loan));
         Mockito.when(loanMapper.toDto(loan)).thenReturn(dto);
 
-        var loans = loanFacade.searchLends(1L,2L);
+        var loans = loanFacade.searchLoan(1L,2L);
 
         assertThat(loans).hasSize(1);
         assertThat(loans).extracting(LoanDto::getId).containsExactlyInAnyOrder(1L);

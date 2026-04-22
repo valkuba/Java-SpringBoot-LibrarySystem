@@ -19,44 +19,45 @@ public class FineRestController {
 
     private final FineFacade fineFacade;
 
-    @Operation(summary = "Get all fines")
     @GetMapping
-    public List<FineDto> getAllFines() {
-        return fineFacade.getAllFines();
+    @Operation(summary = "Get all fines")
+    public ResponseEntity<List<FineDto>> getAllFines() {
+        return ResponseEntity.ok(fineFacade.getAllFines());
     }
 
-    @Operation(summary = "Get a fine by its ID")
     @GetMapping("/{id}")
+    @Operation(summary = "Get fine by ID")
     public ResponseEntity<FineDto> getFineById(@PathVariable Long id) {
         return fineFacade.getFineById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get all fines for a specific member")
     @GetMapping("/member/{memberId}")
-    public List<FineDto> getFinesByMember(@PathVariable Long memberId) {
-        return fineFacade.getFinesByMemberId(memberId);
+    @Operation(summary = "Get fines by member ID")
+    public ResponseEntity<List<FineDto>> getFinesByMember(@PathVariable Long memberId) {
+        return ResponseEntity.ok(fineFacade.getFinesByMemberId(memberId));
     }
 
-    @Operation(summary = "Create a new fine")
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public FineDto createFine(@RequestBody FineDto fineDto) {
-        return fineFacade.createFine(fineDto);
+    @Operation(summary = "Create fine")
+    public ResponseEntity<FineDto> createFine(@RequestBody FineDto fineDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(fineFacade.createFine(fineDto));
     }
 
-    @Operation(summary = "Update an existing fine by ID")
     @PutMapping("/{id}")
-    public FineDto updateFine(@PathVariable Long id, @RequestBody FineDto fineDto) {
+    @Operation(summary = "Update fine")
+    public ResponseEntity<FineDto> updateFine(@PathVariable Long id,
+                                              @RequestBody FineDto fineDto) {
         fineDto.setId(id);
-        return fineFacade.updateFine(fineDto);
+        return ResponseEntity.ok(fineFacade.updateFine(fineDto));
     }
 
-    @Operation(summary = "Delete a fine by ID")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFine(@PathVariable Long id) {
+    @Operation(summary = "Delete fine")
+    public ResponseEntity<Void> deleteFine(@PathVariable Long id) {
         fineFacade.deleteFine(id);
+        return ResponseEntity.noContent().build();
     }
 }
