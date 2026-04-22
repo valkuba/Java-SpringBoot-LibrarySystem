@@ -1,8 +1,10 @@
 package pa165.project.lendingservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import pa165.project.lendingservice.config.LoanConstants;
+import pa165.project.lendingservice.messaging.LoanMessageProducer;
 import pa165.project.lendingservice.model.Fine;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.repository.FineRepository;
@@ -19,6 +21,7 @@ public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository loanRepository;
     private final FineRepository fineRepository;
+    private final LoanMessageProducer loanMessageProducer;
 
     @Override
     public List<Loan> getAllLoans() {
@@ -36,7 +39,17 @@ public class LoanServiceImpl implements LoanService {
         if(activeLoans >= LoanConstants.MAX_ACTIVE_LOANS){
             throw new RuntimeException("Member has reached maximum active loans");
         }
-        return loanRepository.save(loan);
+
+        Loan savedLoan = loanRepository.save(loan);
+
+        loanMessageProducer.sendLoanCreated(
+                savedLoan.getId(),
+                savedLoan.getMemberId(),
+                savedLoan.getBookCopyId(),
+                savedLoan.getLoanDate().toString()
+        );
+
+        return savedLoan;
     }
 
     @Override
@@ -76,9 +89,23 @@ public class LoanServiceImpl implements LoanService {
                     .status("UNPAID")
                     .build();
             fineRepository.save(fine);
-        }
 
-        return loanRepository.save(loan);
+            loanMessageProducer.sendFineIssued(
+                    loan.getId(),
+                    loan.getMemberId(),
+                    fine.getAmount(),
+                    fine.getDate().toString()
+            );
+        }
+        Loan saved = loanRepository.save(loan);
+
+        loanMessageProducer.sendLoanReturned(
+                saved.getId(),
+                saved.getMemberId(),
+                actualReturnDate.toString()
+        );
+
+        return saved;
     }
 
     @Override

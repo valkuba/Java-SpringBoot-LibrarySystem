@@ -17,5 +17,15 @@ spring:
       enabled: true
       path: /h2-console
 
+  artemis:
+    mode: native
+    broker-url: tcp://artemis:61616
+    user: artemis
+    password: artemis
+
+messaging:
+  queue:
+    loan-events: loan-events-queue
+
 server:
   port: 8081

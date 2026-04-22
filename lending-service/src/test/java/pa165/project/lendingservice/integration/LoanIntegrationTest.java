@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import pa165.project.lendingservice.messaging.LoanMessageProducer;
 import tools.jackson.databind.json.JsonMapper;
 import pa165.project.lendingservice.dto.LoanDto;
 
@@ -20,6 +22,9 @@ public class LoanIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private LoanMessageProducer loanMessageProducer;
 
     private final JsonMapper jsonMapper = new JsonMapper();
 
