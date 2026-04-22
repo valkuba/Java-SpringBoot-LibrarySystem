@@ -53,6 +53,35 @@ public class NotificationServiceImpl implements NotificationService {
         return createNotification(n);
     }
 
+    @Transactional
+    @Override
+    public Notification createLoanCreatedNotification(String recipientEmail, String bookTitle, Long loanId, String loanDate) {
+        String message = "Loan " + loanId + " for '" + bookTitle + "' was created on " + loanDate + ".";
+        return createFromMessage(recipientEmail, message);
+    }
+
+    @Transactional
+    @Override
+    public Notification createLoanReturnedNotification(String recipientEmail, String bookTitle, Long loanId, String returnDate, String status) {
+        String message = "Loan " + loanId + " for '" + bookTitle + "' was returned on " + returnDate + ". Status: " + status + ".";
+        return createFromMessage(recipientEmail, message);
+    }
+
+    @Transactional
+    @Override
+    public Notification createFineIssuedNotification(String recipientEmail, String bookTitle, Long loanId, Double fineAmount, String date) {
+        String message = "Fine of " + fineAmount + " CZK was issued for loan " + loanId + " ('" + bookTitle + "') on " + date + ".";
+        return createFromMessage(recipientEmail, message);
+    }
+
+    private Notification createFromMessage(String recipientEmail, String message) {
+        Notification notification = new Notification();
+        notification.setRecipientEmail(recipientEmail);
+        notification.setMessage(message);
+        notification.setCreatedAt(LocalDateTime.now());
+        return notificationRepository.save(notification);
+    }
+
     @Override
     public List<Notification> getAllSortedByDate() {
         return notificationRepository.findAll().stream()

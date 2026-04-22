@@ -22,9 +22,9 @@ spring:
   jms:
     pub-sub-domain: false
 
-app:
-  messaging:
-    overdue-queue: overdue.books
+messaging:
+  queue:
+    loan-events: loan-events-queue
 
 server:
   port: 8083

@@ -10,10 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import pa165.project.notificationstatsservice.dto.CreateNotificationDto;
-import pa165.project.notificationstatsservice.dto.LendingNotificationDto;
 import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.facade.NotificationFacade;
+import pa165.project.notificationstatsservice.messaging.LoanEventMessage;
+import pa165.project.notificationstatsservice.messaging.NotificationType;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /* *
@@ -68,19 +70,23 @@ public class NotificationRestController {
         return ResponseEntity.ok(notificationFacade.getAllSortedByDate());
     }
 
-    // just a test producer, to try via the swagger ui if consumer work
+    // test producer to verify consumer mapping flow
     @Autowired
     private JmsTemplate jmsTemplate;
 
     @PostMapping("/test-jms")
-    @Operation(summary = "Test JMS - send test message")
+    @Operation(summary = "Test JMS - send loan event message")
     public ResponseEntity<String> testJms() {
-        LendingNotificationDto dto = new LendingNotificationDto();
-        dto.setType(LendingNotificationDto.NotificationType.OVERDUE);
-        dto.setRecipientEmail("test@example.com");
-        dto.setBookTitle("Clean Code");
+        LoanEventMessage msg = LoanEventMessage.builder()
+                .loanId(1L)
+                .memberId(1L)
+                .bookCopyId(1L)
+                .type(NotificationType.LOAN_CREATED)
+                .status("LOANED")
+                .date(LocalDate.now().toString())
+                .build();
 
-        jmsTemplate.convertAndSend("overdue.books", dto);
+        jmsTemplate.convertAndSend("loan-events-queue", msg);
         return ResponseEntity.ok("Message sent");
     }
 }

@@ -12,9 +12,10 @@ import java.util.List;
 
 @Repository
 public interface StatsRepository extends JpaRepository<Stats, Long> {
-    @Query("SELECT s FROM Stats s WHERE s.returned = :returned")
     List<Stats> findByReturned(Boolean returned);
 
-    @Query("SELECT s FROM Stats s WHERE s.bookTitle = :bookTitle")
     List<Stats> findByBookTitle(String bookTitle);
+
+    @Query("SELECT s.bookTitle, COUNT(s) as borrowCount FROM Stats s GROUP BY s.bookTitle ORDER BY borrowCount DESC")
+    List<Object[]> findBookBorrowCounts();
 }
