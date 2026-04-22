@@ -23,7 +23,7 @@ public class LoanMessageProducer {
                 .loanId(loanId)
                 .memberId(memberId)
                 .bookCopyId(bookCopyId)
-                .eventType("LOAN_CREATED")
+                .type(NotificationType.LOAN_CREATED)
                 .date(loanDate)
                 .build();
         send(message);
@@ -33,7 +33,7 @@ public class LoanMessageProducer {
         var message = LoanEventMessage.builder()
                 .loanId(loanId)
                 .memberId(memberId)
-                .eventType("LOAN_RETURNED")
+                .type(NotificationType.LOAN_RETURNED)
                 .status("RETURNED")
                 .date(returnDate)
                 .build();
@@ -45,7 +45,7 @@ public class LoanMessageProducer {
         var message = LoanEventMessage.builder()
                 .loanId(loanId)
                 .memberId(memberId)
-                .eventType("FINE_ISSUED")
+                .type(NotificationType.FINE_ISSUED)
                 .fineAmount(fineAmount)
                 .date(date)
                 .build();

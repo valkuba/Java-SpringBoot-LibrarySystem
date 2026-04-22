@@ -13,7 +13,7 @@ public class LoanEventMessage {
     private Long loanId;
     private Long memberId;
     private Long bookCopyId;
-    private String eventType;  // "LOAN_CREATED", "LOAN_RETURNED", "FINE_ISSUED"
+    private NotificationType type;
     private Double fineAmount;
     private String status;
     private String date;
