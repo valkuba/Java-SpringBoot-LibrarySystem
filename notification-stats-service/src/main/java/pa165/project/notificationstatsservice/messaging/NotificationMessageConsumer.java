@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 import pa165.project.notificationstatsservice.service.NotificationService;
 
 @Slf4j
@@ -44,6 +43,7 @@ public class NotificationMessageConsumer {
         log.info("Received loan event type={} loanId={}", msg.getType(), msg.getLoanId());
     }
 
+    // TODO now the exception just creates a temporary email/book
     private String resolveRecipientEmail(Long memberId) {
         try {
             MemberLookupResponse member = RestClient.create(memberBaseUrl)
@@ -56,10 +56,6 @@ public class NotificationMessageConsumer {
                 return "unknown-email-for-member-" + memberId;
             }
             return member.email();
-        /*} catch (RestClientResponseException ex) {
-            log.warn("Member lookup failed memberId={} status={} body={}",
-                    memberId, ex.getStatusCode(), ex.getResponseBodyAsString());
-            return "unknown-email-for-member-" + memberId;*/
         } catch (Exception ex) {
             log.warn("Member lookup failed memberId={} reason={}", memberId, ex.getMessage());
             return "unknown-email-for-member-" + memberId;
@@ -71,7 +67,6 @@ public class NotificationMessageConsumer {
             return "Unknown book";
         }
 
-        // TODO bookCopyId vs bookId mapping is not explicit between services.
         try {
             BookLookupResponse book = RestClient.create(bookBaseUrl)
                     .get()
@@ -84,10 +79,6 @@ public class NotificationMessageConsumer {
             }
 
             return book.title();
-        /*} catch (RestClientResponseException ex) {
-            log.warn("Book lookup failed bookCopyId={} status={} body={}",
-                    bookCopyId, ex.getStatusCode(), ex.getResponseBodyAsString());
-            return "BookCopy #" + bookCopyId;*/
         } catch (Exception ex) {
             log.warn("Book lookup failed bookCopyId={} reason={}", bookCopyId, ex.getMessage());
             return "BookCopy #" + bookCopyId;
