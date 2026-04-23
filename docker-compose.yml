@@ -29,10 +29,9 @@ services:
 #    ports:
 #      - "8082:8082"
 #
-#  notification-stats-service:
-#    build:
-#      context: .
-#      dockerfile: notification-stats-service/Dockerfile
-#    ports:
-#      - "8083:8083"
->>>>>>> docker-compose.yml
+  notification-stats-service:
+    build:
+      context: .
+      dockerfile: notification-stats-service/Dockerfile
+    ports:
+      - "8083:8083"

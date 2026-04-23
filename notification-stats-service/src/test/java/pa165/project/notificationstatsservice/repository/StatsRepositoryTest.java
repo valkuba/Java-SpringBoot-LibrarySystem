@@ -19,32 +19,30 @@ public class StatsRepositoryTest {
     void setup() {
         statsRepository.deleteAll();
 
-            Stats stat1 = new Stats();
-            stat1.setBookTitle("Project Hail Mary");
-            stat1.setBookId(1L);
-            stat1.setReturned(true);
-            statsRepository.save(stat1);
+            statsRepository.save(Stats.builder()
+                    .bookTitle("Project Hail Mary")
+                    .bookId(1L)
+                    .returned(true)
+                    .build());
 
-            Stats stat2 = new Stats();
-            stat2.setBookTitle("Project Hail Mary");
-            stat2.setBookId(1L);
-            stat2.setReturned(false);
-            statsRepository.save(stat2);
+            statsRepository.save(Stats.builder()
+                    .bookTitle("Project Hail Mary")
+                    .bookId(1L)
+                    .returned(false)
+                    .build());
 
-            Stats stat3 = new Stats();
-            stat3.setBookTitle("Donnie Darko");
-            stat3.setBookId(2L);
-            stat3.setReturned(true);
-            statsRepository.save(stat3);
+            statsRepository.save(Stats.builder()
+                    .bookTitle("Donnie Darko")
+                    .bookId(2L)
+                    .returned(true)
+                    .build());
 
-            Stats stat4 = new Stats();
-            stat4.setBookTitle("Animal Farm");
-            stat4.setBookId(3L);
-            stat4.setReturned(false);
-            statsRepository.save(stat4);
+            statsRepository.save(Stats.builder()
+                    .bookTitle("Animal Farm")
+                    .bookId(3L)
+                    .returned(false)
+                    .build());
     }
-
-    // --- findByReturned ---
 
     @Test
     void findByReturned_True_ReturnsOnlyReturnedStats() {

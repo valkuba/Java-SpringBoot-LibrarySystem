@@ -43,7 +43,6 @@ public class NotificationMessageConsumer {
         log.info("Received loan event type={} loanId={}", msg.getType(), msg.getLoanId());
     }
 
-    // TODO now the exception just creates a temporary email/book
     private String resolveRecipientEmail(Long memberId) {
         try {
             MemberLookupResponse member = RestClient.create(memberBaseUrl)
