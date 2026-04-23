@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
-    @Query("SELECT n FROM Notification n WHERE n.recipientEmail = :recipientEmail")
     List<Notification> findByRecipientEmail(String recipientEmail);
 
     @Query("SELECT n FROM Notification n ORDER BY n.createdAt DESC")
