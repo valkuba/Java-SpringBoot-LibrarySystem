@@ -1,6 +1,7 @@
 package pa165.project.memberservice.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pa165.project.memberservice.model.Member;
 import pa165.project.memberservice.model.exception.MemberUpdateException;
@@ -58,8 +59,14 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberDoesntExistsException(member.getId());
         }
         original.get().validateChanges(member);
-        //TODO try catch username, email and registration date constraints exceptions
-        return memberRepository.save(member);
+        Member updated;
+        // should be already covered by validateChanges, but better safe than sorry
+        try{
+            updated = memberRepository.save(original.get());
+        } catch (DataIntegrityViolationException e) {
+            throw new MemberUpdateException("Could not update member",e);
+        }
+        return updated;
     }
 
     private Optional<Member> getById(Member member) {
