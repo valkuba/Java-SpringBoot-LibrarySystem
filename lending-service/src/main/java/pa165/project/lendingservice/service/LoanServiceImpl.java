@@ -1,8 +1,10 @@
 package pa165.project.lendingservice.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pa165.project.lendingservice.config.LoanConstants;
+import pa165.project.lendingservice.messaging.LoanMessageProducer;
 import pa165.project.lendingservice.model.Fine;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.repository.FineRepository;
@@ -19,6 +21,7 @@ public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository loanRepository;
     private final FineRepository fineRepository;
+    private final LoanMessageProducer loanMessageProducer;
 
     @Override
     public List<Loan> getAllLoans() {
@@ -32,11 +35,21 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public Loan createLoan(Loan loan) {
-        long activeLoans = loanRepository.countActiveLoansByMember(loan.getMemberId());
-        if(activeLoans >= LoanConstants.MAX_ACTIVE_LOANS){
+        long activeLoans = loanRepository.countActiveLoansByMemberId(loan.getMemberId());
+        if (activeLoans >= LoanConstants.MAX_ACTIVE_LOANS) {
             throw new RuntimeException("Member has reached maximum active loans");
         }
-        return loanRepository.save(loan);
+
+        Loan savedLoan = loanRepository.save(loan);
+
+        loanMessageProducer.sendLoanCreated(
+                savedLoan.getId(),
+                savedLoan.getMemberId(),
+                savedLoan.getBookCopyId(),
+                savedLoan.getLoanDate().toString()
+        );
+
+        return savedLoan;
     }
 
     @Override
@@ -59,7 +72,9 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
+    @Transactional
     public Loan returnLoan(Long loanId, LocalDate actualReturnDate) {
+
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new RuntimeException("Loan not found"));
 
@@ -67,20 +82,38 @@ public class LoanServiceImpl implements LoanService {
 
         double fineAmount = calculateFine(loan.getDueDate(), actualReturnDate);
 
-        if(fineAmount > 0){
-            Fine fine = new Fine();
-            fine.setLoanId(loan.getId());
-            fine.setMemberId(loan.getMemberId());
-            fine.setAmount(fineAmount);
-            fine.setStatus("UNPAID");
+        if (fineAmount > 0) {
+            Fine fine = Fine.builder()
+                    .loanId(loan.getId())
+                    .memberId(loan.getMemberId())
+                    .amount(fineAmount)
+                    .date(actualReturnDate)
+                    .status("UNPAID")
+                    .build();
+
+            fineRepository.save(fine);
+
+            loanMessageProducer.sendFineIssued(
+                    loan.getId(),
+                    loan.getMemberId(),
+                    fine.getAmount(),
+                    actualReturnDate.toString()
+            );
         }
 
-        return loanRepository.save(loan);
+        Loan saved = loanRepository.save(loan);
+
+        loanMessageProducer.sendLoanReturned(
+                saved.getId(),
+                saved.getMemberId(),
+                actualReturnDate.toString()
+        );
+
+        return saved;
     }
 
     @Override
     public double calculateFine(LocalDate dueDate, LocalDate returnDate) {
-        // TODO: figure out the fine amount per day
         if (returnDate.isAfter(dueDate)) {
             long daysLate = ChronoUnit.DAYS.between(dueDate, returnDate);
             return daysLate * LoanConstants.FINE_PER_DAY;

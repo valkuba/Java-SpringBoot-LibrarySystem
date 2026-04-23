@@ -19,50 +19,51 @@ public class ReservationRestController {
 
     private final ReservationFacade reservationFacade;
 
-    @Operation(summary = "Get all reservations")
     @GetMapping
-    public List<ReservationDto> getAllReservations() {
-        return reservationFacade.getAllReservations();
+    @Operation(summary = "Get all reservations")
+    public ResponseEntity<List<ReservationDto>> getAllReservations() {
+        return ResponseEntity.ok(reservationFacade.getAllReservations());
     }
 
-    @Operation(summary = "Get a reservation by its ID")
     @GetMapping("/{id}")
+    @Operation(summary = "Get reservation by ID")
     public ResponseEntity<ReservationDto> getReservationById(@PathVariable Long id) {
         return reservationFacade.getReservationById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @Operation(summary = "Get reservations by member ID")
     @GetMapping("/member/{memberId}")
-    public List<ReservationDto> getReservationsByMember(@PathVariable Long memberId) {
-        return reservationFacade.getReservationsByMemberId(memberId);
+    @Operation(summary = "Get reservations by member ID")
+    public ResponseEntity<List<ReservationDto>> getReservationsByMember(@PathVariable Long memberId) {
+        return ResponseEntity.ok(reservationFacade.getReservationsByMemberId(memberId));
     }
 
-    @Operation(summary = "Get reservations by book ID")
     @GetMapping("/book/{bookId}")
-    public List<ReservationDto> getReservationsByBook(@PathVariable Long bookId) {
-        return reservationFacade.getReservationsByBookId(bookId);
+    @Operation(summary = "Get reservations by book ID")
+    public ResponseEntity<List<ReservationDto>> getReservationsByBook(@PathVariable Long bookId) {
+        return ResponseEntity.ok(reservationFacade.getReservationsByBookId(bookId));
     }
 
-    @Operation(summary = "Create a new reservation")
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ReservationDto createReservation(@RequestBody ReservationDto reservationDto) {
-        return reservationFacade.createReservation(reservationDto);
+    @Operation(summary = "Create reservation")
+    public ResponseEntity<ReservationDto> createReservation(@RequestBody ReservationDto reservationDto) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(reservationFacade.createReservation(reservationDto));
     }
 
-    @Operation(summary = "Update an existing reservation")
     @PutMapping("/{id}")
-    public ReservationDto updateReservation(@PathVariable Long id, @RequestBody ReservationDto reservationDto) {
+    @Operation(summary = "Update reservation")
+    public ResponseEntity<ReservationDto> updateReservation(@PathVariable Long id,
+                                                            @RequestBody ReservationDto reservationDto) {
         reservationDto.setId(id);
-        return reservationFacade.updateReservation(reservationDto);
+        return ResponseEntity.ok(reservationFacade.updateReservation(reservationDto));
     }
 
-    @Operation(summary = "Delete a reservation")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteReservation(@PathVariable Long id) {
+    @Operation(summary = "Delete reservation")
+    public ResponseEntity<Void> deleteReservation(@PathVariable Long id) {
         reservationFacade.deleteReservation(id);
+        return ResponseEntity.noContent().build();
     }
 }

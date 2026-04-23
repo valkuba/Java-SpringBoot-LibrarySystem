@@ -1,28 +1,38 @@
 services:
   artemis:
-    image: apache/artemis:2.53.0
+    image: apache/activemq-artemis
     container_name: artemis
     ports:
       - "61616:61616"
       - "8161:8161"
-    healthcheck:
-      test: ["CMD-SHELL", "/var/lib/artemis-instance/bin/artemis check node --user artemis --password artemis || exit 1"]
-      interval: 15s
-      timeout: 10s
-      retries: 5
-      start_period: 30s
-
-  notification-stats-service:
+    environment:
+      ARTEMIS_USER: artemis
+      ARTEMIS_PASSWORD: artemis
+#  book-service:
+#    build:
+#      context: .
+#      dockerfile: book-service/Dockerfile
+#    ports:
+#      - "8080:8080"
+#
+  lending-service:
     build:
       context: .
-      dockerfile: notification-stats-service/Dockerfile
+      dockerfile: lending-service/Dockerfile
     ports:
-      - "8083:8083"
-    environment:
-      SPRING_ARTEMIS_MODE: native
-      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
-      SPRING_ARTEMIS_USER: artemis
-      SPRING_ARTEMIS_PASSWORD: artemis
-    depends_on:
-      artemis:
-        condition: service_healthy
+      - "8081:8081"
+#
+#  member-service:
+#    build:
+#      context: .
+#      dockerfile: member-service/Dockerfile
+#    ports:
+#      - "8082:8082"
+#
+#  notification-stats-service:
+#    build:
+#      context: .
+#      dockerfile: notification-stats-service/Dockerfile
+#    ports:
+#      - "8083:8083"
+>>>>>>> docker-compose.yml
