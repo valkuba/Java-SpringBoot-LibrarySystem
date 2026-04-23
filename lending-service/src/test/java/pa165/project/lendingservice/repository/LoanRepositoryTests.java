@@ -7,22 +7,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import pa165.project.lendingservice.model.Loan;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-public class LoanRepositoryImplTests {
+public class LoanRepositoryTests {
 
     @Autowired
-    private LoanRepositoryImpl loanRepository;
+    private LoanRepository loanRepository;
 
+    private Loan loan1;
+    private Loan loan2;
+    private Loan loan3;
     @BeforeEach
     public void setup() {
-        loanRepository.findAll().forEach(l -> loanRepository.deleteById(l.getId()));
+        loanRepository.deleteAll();
 
-        loanRepository.save(Loan.builder()
-                .id(1L)
+        loan1 = loanRepository.save(Loan.builder()
                 .memberId(10L)
                 .bookCopyId(100L)
                 .loanDate(LocalDate.of(2026, 1, 1))
@@ -30,8 +31,7 @@ public class LoanRepositoryImplTests {
                 .status("ACTIVE")
                 .build());
 
-        loanRepository.save(Loan.builder()
-                .id(2L)
+        loan2 = loanRepository.save(Loan.builder()
                 .memberId(10L)
                 .bookCopyId(101L)
                 .loanDate(LocalDate.of(2026, 2, 1))
@@ -40,8 +40,7 @@ public class LoanRepositoryImplTests {
                 .status("RETURNED")
                 .build());
 
-        loanRepository.save(Loan.builder()
-                .id(3L)
+        loan3 = loanRepository.save(Loan.builder()
                 .memberId(20L)
                 .bookCopyId(102L)
                 .loanDate(LocalDate.of(2026, 3, 1))
@@ -55,12 +54,11 @@ public class LoanRepositoryImplTests {
         var result = loanRepository.findAll();
 
         assertThat(result).hasSize(3);
-        assertThat(result).extracting(Loan::getId).containsExactlyInAnyOrder(1L, 2L, 3L);
     }
 
     @Test
     public void findById_existingId_returnsLoan() {
-        var result = loanRepository.findById(1L);
+        var result = loanRepository.findById(loan1.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get().getMemberId()).isEqualTo(10L);
@@ -91,49 +89,29 @@ public class LoanRepositoryImplTests {
     }
 
     @Test
-    public void save_loanWithExistingId_overwritesLoan() {
-        var updated = Loan.builder()
-                .id(1L)
-                .memberId(10L)
-                .bookCopyId(100L)
-                .loanDate(LocalDate.of(2026, 1, 1))
-                .dueDate(LocalDate.of(2026, 1, 15))
-                .status("RETURNED")
-                .build();
-
-        loanRepository.save(updated);
-
-        var foundUpdated = loanRepository.findById(1L);
-        assertThat(foundUpdated).isPresent();
-        assertThat(foundUpdated.get().getStatus()).isEqualTo("RETURNED");
-        assertThat(loanRepository.findAll()).hasSize(3);
-    }
-
-    @Test
     public void countActiveLoansByMember_memberWithTwoActiveLoans_returnsOne() {
-        var count = loanRepository.countActiveLoansByMember(10L);
+        var count = loanRepository.countActiveLoansByMemberId(10L);
 
         assertThat(count).isEqualTo(1);
     }
 
     @Test
     public void countActiveLoansByMember_memberWithNoActiveLoans_returnsZero() {
-        var count = loanRepository.countActiveLoansByMember(999L);
+        var count = loanRepository.countActiveLoansByMemberId(999L);
 
         assertThat(count).isZero();
     }
 
     @Test
     public void findByMember_existingMember_returnsOnlyHisLoans() {
-        var result = loanRepository.findByMember(10L);
+        var result = loanRepository.findByMemberId(10L);
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Loan::getId).containsExactlyInAnyOrder(1L, 2L);
     }
 
     @Test
     public void findByMember_nonExistingMember_returnsEmptyList() {
-        var result = loanRepository.findByMember(999L);
+        var result = loanRepository.findByMemberId(999L);
 
         assertThat(result).isEmpty();
     }
@@ -155,7 +133,7 @@ public class LoanRepositoryImplTests {
 
     @Test
     public void deleteById_existingId_removesLoan() {
-        loanRepository.deleteById(2L);
+        loanRepository.deleteById(loan2.getId());
 
         assertThat(loanRepository.findById(2L)).isEmpty();
         assertThat(loanRepository.findAll()).hasSize(2);

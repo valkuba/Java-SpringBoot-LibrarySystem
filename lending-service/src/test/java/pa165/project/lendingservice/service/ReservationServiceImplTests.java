@@ -111,7 +111,7 @@ public class ReservationServiceImplTests {
 
     @Test
     public void updateReservation_existingReservation_returnsUpdatedReservation() {
-        Mockito.when(reservationRepository.update(Mockito.any(Reservation.class))).thenReturn(Reservation.builder().id(1L).memberId(2L).build());
+        Mockito.when(reservationRepository.save(Mockito.any(Reservation.class))).thenReturn(Reservation.builder().id(1L).memberId(2L).build());
 
         var reservation = reservationService.updateReservation(Reservation.builder().id(1L).memberId(2L).build());
 

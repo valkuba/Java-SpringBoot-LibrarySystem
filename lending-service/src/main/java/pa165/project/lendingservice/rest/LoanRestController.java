@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.facade.LoanFacade;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -22,13 +23,13 @@ public class LoanRestController {
     @GetMapping
     @Operation(summary = "Get all loans")
     public ResponseEntity<List<LoanDto>> getAllLends() {
-        return ResponseEntity.ok(loanFacade.getAllLends());
+        return ResponseEntity.ok(loanFacade.getAllLoans());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get loan by ID")
     public ResponseEntity<LoanDto> getLendById(@PathVariable Long id) {
-        return loanFacade.getLendById(id)
+        return loanFacade.getLoanById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
@@ -37,20 +38,27 @@ public class LoanRestController {
     @Operation(summary = "Create a new loan")
     public ResponseEntity<LoanDto> createBook(@Valid @RequestBody LoanDto loanDto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(loanFacade.createLend(loanDto));
+                .body(loanFacade.createLoan(loanDto));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a loan")
     public ResponseEntity<LoanDto> updateLend(@PathVariable Long id,
                                               @Valid @RequestBody LoanDto loanDto) {
-        return ResponseEntity.ok(loanFacade.updateLend(id, loanDto));
+        return ResponseEntity.ok(loanFacade.updateLoan(id, loanDto));
+    }
+
+    @PutMapping("/{id}/return")
+    @Operation(summary = "Return a loan")
+    public ResponseEntity<LoanDto> returnLoan(@PathVariable Long id,
+                                              @RequestParam LocalDate returnDate) {
+        return ResponseEntity.ok(loanFacade.returnLoan(id, returnDate));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a loan")
     public ResponseEntity<Void> deleteLend(@PathVariable Long id) {
-        loanFacade.deleteLend(id);
+        loanFacade.deleteLoan(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -58,7 +66,7 @@ public class LoanRestController {
     @Operation(summary = "Search loans by memberId or bookCopyId")
     public ResponseEntity<List<LoanDto>>  searchLends(@RequestParam(required = false) Long memberId,
                                                       @RequestParam(required = false) Long bookCopyId) {
-        return  ResponseEntity.ok(loanFacade.searchLends(memberId, bookCopyId));
+        return  ResponseEntity.ok(loanFacade.searchLoan(memberId, bookCopyId));
     }
 
 }

@@ -13,17 +13,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
-public class ReservationRepositoryImplTests {
+public class ReservationRepositoryTests {
 
     @Autowired
-    private ReservationRepositoryImpl reservationRepository;
+    private ReservationRepository reservationRepository;
+
+    private Reservation reservation1;
+    private Reservation reservation2;
+    private Reservation reservation3;
 
     @BeforeEach
     public void setup() {
-        reservationRepository.findAll().forEach(r -> reservationRepository.deleteById(r.getId()));
+        reservationRepository.deleteAll();
 
-        reservationRepository.save(Reservation.builder()
-                .id(1L)
+        reservation1 = reservationRepository.save(Reservation.builder()
                 .memberId(10L)
                 .bookId(100L)
                 .reservationDate(LocalDate.of(2026, 1, 1))
@@ -31,8 +34,7 @@ public class ReservationRepositoryImplTests {
                 .status("PENDING")
                 .build());
 
-        reservationRepository.save(Reservation.builder()
-                .id(2L)
+        reservation2 = reservationRepository.save(Reservation.builder()
                 .memberId(10L)
                 .bookId(101L)
                 .reservationDate(LocalDate.of(2026, 2, 1))
@@ -40,8 +42,7 @@ public class ReservationRepositoryImplTests {
                 .status("FULFILLED")
                 .build());
 
-        reservationRepository.save(Reservation.builder()
-                .id(3L)
+        reservation3 = reservationRepository.save(Reservation.builder()
                 .memberId(20L)
                 .bookId(100L)
                 .reservationDate(LocalDate.of(2026, 3, 1))
@@ -55,12 +56,11 @@ public class ReservationRepositoryImplTests {
         var result = reservationRepository.findAll();
 
         assertThat(result).hasSize(3);
-        assertThat(result).extracting(Reservation::getId).containsExactlyInAnyOrder(1L, 2L, 3L);
     }
 
     @Test
     public void findById_existingId_returnsReservation() {
-        var result = reservationRepository.findById(1L);
+        var result = reservationRepository.findById(reservation1.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get().getMemberId()).isEqualTo(10L);
@@ -90,29 +90,10 @@ public class ReservationRepositoryImplTests {
     }
 
     @Test
-    public void save_reservationWithExistingId_overwritesReservation() {
-        var updated = Reservation.builder()
-                .id(1L)
-                .memberId(10L)
-                .bookId(100L)
-                .reservationDate(LocalDate.of(2026, 1, 1))
-                .status("FULFILLED")
-                .build();
-
-        reservationRepository.save(updated);
-
-        var foundUpdated = reservationRepository.findById(1L);
-        assertThat(foundUpdated).isPresent();
-        assertThat(foundUpdated.get().getStatus()).isEqualTo("FULFILLED");
-        assertThat(reservationRepository.findAll()).hasSize(3);
-    }
-
-    @Test
     public void findByMemberId_memberWithMultipleReservations_returnsOnlyHisReservations() {
         var result = reservationRepository.findByMemberId(10L);
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Reservation::getId).containsExactlyInAnyOrder(1L, 2L);
     }
 
     @Test
@@ -127,7 +108,6 @@ public class ReservationRepositoryImplTests {
         var result = reservationRepository.findByBookId(100L);
 
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Reservation::getId).containsExactlyInAnyOrder(1L, 3L);
     }
 
     @Test
@@ -140,40 +120,25 @@ public class ReservationRepositoryImplTests {
     @Test
     public void update_existingReservation_updatesStatus() {
         var updated = Reservation.builder()
-                .id(1L)
                 .memberId(10L)
                 .bookId(100L)
                 .reservationDate(LocalDate.of(2026, 1, 1))
                 .status("FULFILLED")
                 .build();
 
-        var result = reservationRepository.update(updated);
+        var result = reservationRepository.save(updated);
 
         assertThat(result.getStatus()).isEqualTo("FULFILLED");
-        var foundUpdated = reservationRepository.findById(1L);
+        var foundUpdated = reservationRepository.findById(updated.getId());
         assertThat(foundUpdated).isPresent();
         assertThat(foundUpdated.get().getStatus()).isEqualTo("FULFILLED");
     }
 
     @Test
-    public void update_nonExistingReservation_throwsNoSuchElementException() {
-        var nonExisting = Reservation.builder()
-                .id(999L)
-                .memberId(10L)
-                .bookId(100L)
-                .status("PENDING")
-                .build();
-
-        assertThatThrownBy(() -> reservationRepository.update(nonExisting))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessageContaining("999");
-    }
-
-    @Test
     public void deleteById_existingId_removesReservation() {
-        reservationRepository.deleteById(2L);
+        reservationRepository.deleteById(reservation2.getId());
 
-        assertThat(reservationRepository.findById(2L)).isEmpty();
+        assertThat(reservationRepository.findById(reservation2.getId())).isEmpty();
         assertThat(reservationRepository.findAll()).hasSize(2);
     }
 

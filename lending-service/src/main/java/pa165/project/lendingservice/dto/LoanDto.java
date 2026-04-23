@@ -2,10 +2,7 @@ package pa165.project.lendingservice.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 
@@ -13,11 +10,12 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @Schema(description = "Loan data transfer object")
 public class LoanDto {
 
     @Schema(description = "Unique identifier of the loan")
-    @NotNull
     private Long id;
 
     @Schema(description = "Unique identifier of member")
