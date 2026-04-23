@@ -6,9 +6,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataIntegrityViolationException;
 import pa165.project.memberservice.model.Member;
 import pa165.project.memberservice.model.exception.MemberUpdateException;
 import pa165.project.memberservice.repository.MemberRepository;
+import pa165.project.memberservice.service.exception.EmailAlreadyRegisteredException;
+import pa165.project.memberservice.service.exception.MemberDoesntExistsException;
+import pa165.project.memberservice.service.exception.MemberIdAlreadyExistsException;
+import pa165.project.memberservice.service.exception.MemberNameAlreadyExistsException;
 import pa165.project.memberservice.service.exception.MemberServiceException;
 
 import java.util.Date;
@@ -52,24 +57,36 @@ class MemberServiceImplTest {
     }
 
     @Test
-    void registerInvalidMember_shouldThrow() throws Exception {
-        Member invalidMember = Member.builder()
-                .id(1L)
-                .username(null)       // missing name
-                .email("test@example.com")
-                .password("secret")
-                .registrationDate(new Date())
-                .build();
+    void registerMember_duplicateId_throwsMemberIdAlreadyExistsException() throws Exception {
+        Member member = createTestMember();
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
-        doThrow(new MemberServiceException("Username is required"))
-                .when(memberRepository)
-                .save(invalidMember);
+        assertThrows(MemberIdAlreadyExistsException.class, () -> memberService.registerMember(member));
 
-        assertThrows(MemberServiceException.class, () -> {
-            memberService.registerMember(invalidMember);
-        });
+        verify(memberRepository, never()).save(any());
+    }
 
-        verify(memberRepository).save(invalidMember);
+    @Test
+    void registerMember_duplicateUsername_throwsMemberNameAlreadyExistsException() throws Exception {
+        Member member = createTestMember();
+        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberRepository.findByUsername("john")).thenReturn(Optional.of(member));
+
+        assertThrows(MemberNameAlreadyExistsException.class, () -> memberService.registerMember(member));
+
+        verify(memberRepository, never()).save(any());
+    }
+
+    @Test
+    void registerMember_duplicateEmail_throwsEmailAlreadyRegisteredException() throws Exception {
+        Member member = createTestMember();
+        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+        when(memberRepository.findByUsername("john")).thenReturn(Optional.empty());
+        when(memberRepository.findByEmail("john@test.com")).thenReturn(Optional.of(member));
+
+        assertThrows(EmailAlreadyRegisteredException.class, () -> memberService.registerMember(member));
+
+        verify(memberRepository, never()).save(any());
     }
 
     @Test
@@ -140,6 +157,17 @@ class MemberServiceImplTest {
     }
 
     @Test
+    void updateMember_nonExistingMember_throwsException() throws Exception {
+        Member member = createTestMember();
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(MemberDoesntExistsException.class, () -> memberService.updateMember(member));
+
+        verify(memberRepository, never()).save(any());
+    }
+
+    @Test
     void updateMember_invalidChange_shouldThrowMemberUpdateException() throws Exception {
         Member original = createTestMember();
         Member memberToUpdate = createTestMember();
@@ -149,6 +177,17 @@ class MemberServiceImplTest {
 
         assertThrows(MemberUpdateException.class, () -> memberService.updateMember(memberToUpdate));
         verify(memberRepository, never()).save(any());
+    }
+
+    @Test
+    void updateMember_inconsistentValidationAndConstraints_shouldThrowException() throws Exception {
+        Member member = createTestMember();
+
+        when(memberRepository.save(member)).thenThrow(DataIntegrityViolationException.class);
+
+        when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
+
+        assertThrows(MemberUpdateException.class,() -> memberService.updateMember(member));
     }
 
     @Test
