@@ -19,7 +19,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member registerMember(Member member) throws MemberServiceException {
-        if(memberRepository.findById(member.getId()).isPresent())
+        if(member.getId() != null && memberRepository.findById(member.getId()).isPresent())
             throw new MemberIdAlreadyExistsException(member.getId());
         if(memberRepository.findByUsername(member.getUsername()).isPresent()){
             throw new MemberNameAlreadyExistsException(member.getUsername());
@@ -38,6 +38,9 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberDoesntExistsException(id);
         }
         var member = memberOpt.get();
+        if(member.isActivated()){
+            throw new MemberAlreadyActivatedException(member.getId());
+        }
         member.setActivated(true);
         memberRepository.save(member);
     }
@@ -62,7 +65,7 @@ public class MemberServiceImpl implements MemberService {
         Member updated;
         // should be already covered by validateChanges, but better safe than sorry
         try{
-            updated = memberRepository.save(original.get());
+            updated = memberRepository.save(member);
         } catch (DataIntegrityViolationException e) {
             throw new MemberUpdateException("Could not update member",e);
         }

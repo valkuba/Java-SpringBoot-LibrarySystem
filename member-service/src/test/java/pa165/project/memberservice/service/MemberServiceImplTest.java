@@ -10,11 +10,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import pa165.project.memberservice.model.Member;
 import pa165.project.memberservice.model.exception.MemberUpdateException;
 import pa165.project.memberservice.repository.MemberRepository;
-import pa165.project.memberservice.service.exception.EmailAlreadyRegisteredException;
-import pa165.project.memberservice.service.exception.MemberDoesntExistsException;
-import pa165.project.memberservice.service.exception.MemberIdAlreadyExistsException;
-import pa165.project.memberservice.service.exception.MemberNameAlreadyExistsException;
-import pa165.project.memberservice.service.exception.MemberServiceException;
+import pa165.project.memberservice.service.exception.*;
 
 import java.util.Date;
 import java.util.List;
@@ -103,9 +99,22 @@ class MemberServiceImplTest {
     }
 
     @Test
-    void activateMemberInvalidId_shouldCallRepository_shouldThrow() throws Exception {
+    void activateMember_InvalidId_shouldThrow() throws Exception {
         assertThrows(MemberServiceException.class, () -> {
             memberService.activateMember(null);
+        });
+
+        verify(memberRepository, never()).save(Mockito.any());
+    }
+
+    @Test
+    void activateMember_alreadyActivated_shouldThrow() throws Exception {
+        var member = createTestMember();
+        member.setActivated(true);
+        when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+
+        assertThrows(MemberAlreadyActivatedException.class, () -> {
+            memberService.activateMember(member.getId());
         });
 
         verify(memberRepository, never()).save(Mockito.any());
@@ -145,15 +154,21 @@ class MemberServiceImplTest {
     @Test
     void updateMember_shouldUpdateMember() throws Exception {
         Member member = createTestMember();
+        Member updatedMember = createTestMember();
+        updatedMember.setUsername("Updated");
+        updatedMember.setEmail("Updated@test.com");
 
-        when(memberRepository.save(member)).thenReturn(member);
+        when(memberRepository.save(updatedMember)).thenReturn(updatedMember);
 
         when(memberRepository.findById(1L)).thenReturn(Optional.of(member));
 
-        Member result = memberService.updateMember(member);
+        Member result = memberService.updateMember(updatedMember);
 
         assertNotNull(result);
-        verify(memberRepository).save(member);
+        assertEquals(updatedMember.getUsername(), result.getUsername());
+        assertEquals(updatedMember.getEmail(), result.getEmail());
+
+        verify(memberRepository).save(updatedMember);
     }
 
     @Test
