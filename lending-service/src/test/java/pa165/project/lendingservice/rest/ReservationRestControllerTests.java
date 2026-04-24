@@ -87,11 +87,46 @@ public class ReservationRestControllerTests {
     }
 
     @Test
-    public void getReservationsByMember_memberWithReservations_returnsOkWithList() {
+    public void getReservationsByMember_memberWithReservations_returnsOkWithList() throws Exception {
+        Mockito.when(reservationFacade.getReservationsByMemberId(1L)).thenReturn(List.of(
+                ReservationDto.builder().id(1L).memberId(1L).build(),
+                ReservationDto.builder().id(2L).memberId(1L).build()
+        ));
+
+        var responseJson = mockMvc.perform(get("/api/reservations/member/{memberId}", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+        var response = jsonMapper.readValue(responseJson, ReservationDto[].class);
+
+        assertThat(response).hasSize(2);
+        assertThat(response).extracting(ReservationDto::getMemberId)
+                .containsOnly(1L);
     }
 
     @Test
-    public void getReservationsByBook_bookWithReservations_returnsOkWithList() {
+    public void getReservationsByBook_bookWithReservations_returnsOkWithList() throws Exception {
+        Mockito.when(reservationFacade.getReservationsByBookId(10L)).thenReturn(List.of(
+                ReservationDto.builder().id(1L).bookId(10L).build(),
+                ReservationDto.builder().id(2L).bookId(10L).build(),
+                ReservationDto.builder().id(3L).bookId(10L).build()
+        ));
+
+        var responseJson = mockMvc.perform(get("/api/reservations/book/{bookId}", 10L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+        var response = jsonMapper.readValue(responseJson, ReservationDto[].class);
+
+        assertThat(response).hasSize(3);
+        assertThat(response).extracting(ReservationDto::getBookId)
+                .containsOnly(10L);
     }
 
     @Test

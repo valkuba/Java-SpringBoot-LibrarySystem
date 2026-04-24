@@ -6,13 +6,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pa165.project.lendingservice.model.Fine;
+import pa165.project.lendingservice.messaging.LoanMessageProducer;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.repository.FineRepository;
 import pa165.project.lendingservice.repository.LoanRepository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,8 +24,14 @@ public class LoanServiceImplTests {
     @Mock
     private LoanRepository loanRepository;
 
+    @Mock
+    private FineRepository fineRepository;
+
     @InjectMocks
     private LoanServiceImpl loanService;
+
+    @Mock
+    private LoanMessageProducer loanMessageProducer;
 
     @Test
     public void getAllLoans_loansExist_returnsAllLoans() {
@@ -64,18 +69,106 @@ public class LoanServiceImplTests {
 
     @Test
     public void createLoan_memberBelowMaxActiveLoans_savesAndReturnsLoan() {
-        Mockito.when(loanRepository.countActiveLoansByMember(1L)).thenReturn(2L);
+        Loan loan = Loan.builder()
+                .memberId(1L)
+                .bookCopyId(1L)
+                .loanDate(LocalDate.now())
+                .dueDate(LocalDate.now().plusDays(10))
+                .build();
 
-        var loansCount = loanRepository.countActiveLoansByMember(1L);
+        Mockito.when(loanRepository.countActiveLoansByMemberId(1L)).thenReturn(2L);
+        Mockito.when(loanRepository.save(Mockito.any())).thenAnswer(i -> i.getArgument(0));
 
-        assertThat(loansCount).isEqualTo(2);
+        Loan result = loanService.createLoan(loan);
+
+        Mockito.verify(loanRepository).save(loan);
+        assertThat(result).isNotNull();
     }
 
     @Test
     public void createLoan_memberAtMaxActiveLoans_throwsRuntimeException() {
-        Mockito.when(loanRepository.countActiveLoansByMember(1L)).thenThrow(new RuntimeException());
+        Mockito.when(loanRepository.countActiveLoansByMemberId(1L)).thenThrow(new RuntimeException());
 
         assertThatThrownBy(()->loanService.createLoan(Loan.builder().build())).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    void createLoan_shouldSendMessageToProducer() {
+        Loan input = Loan.builder()
+                .memberId(5L)
+                .bookCopyId(10L)
+                .loanDate(LocalDate.of(2026, 4, 22))
+                .dueDate(LocalDate.of(2026, 5, 5))
+                .build();
+
+        Loan saved = Loan.builder()
+                .id(1L)
+                .memberId(5L)
+                .bookCopyId(10L)
+                .loanDate(input.getLoanDate())
+                .dueDate(input.getDueDate())
+                .build();
+
+        Mockito.when(loanRepository.countActiveLoansByMemberId(5L)).thenReturn(0L);
+        Mockito.when(loanRepository.save(Mockito.any())).thenReturn(saved);
+
+        loanService.createLoan(input);
+
+        Mockito.verify(loanMessageProducer).sendLoanCreated(
+                1L,
+                5L,
+                10L,
+                "2026-04-22"
+        );
+    }
+
+    @Test
+    void returnLoan_withFine_sendsFineIssuedMessage() {
+        Loan loan = Loan.builder()
+                .id(1L)
+                .memberId(1L)
+                .bookCopyId(1L)
+                .dueDate(LocalDate.of(2026, 1, 1))
+                .build();
+
+        Mockito.when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+        Mockito.when(loanRepository.save(Mockito.any())).thenReturn(loan);
+
+        LocalDate returnDate = LocalDate.of(2026, 1, 10);
+
+        loanService.returnLoan(1L, returnDate);
+
+        Mockito.verify(fineRepository).save(Mockito.any());
+
+        Mockito.verify(loanMessageProducer).sendFineIssued(
+                1L,
+                1L,
+                45.0d,
+                returnDate.toString()
+        );
+    }
+
+    @Test
+    void returnLoan_sendsLoanReturnedMessage() {
+        Loan loan = Loan.builder()
+                .id(1L)
+                .memberId(1L)
+                .bookCopyId(1L)
+                .dueDate(LocalDate.of(2026, 1, 1))
+                .build();
+
+        Mockito.when(loanRepository.findById(1L)).thenReturn(Optional.of(loan));
+        Mockito.when(loanRepository.save(Mockito.any())).thenReturn(loan);
+
+        LocalDate returnDate = LocalDate.of(2026, 1, 2);
+
+        loanService.returnLoan(1L, returnDate);
+
+        Mockito.verify(loanMessageProducer).sendLoanReturned(
+                1L,
+                1L,
+                returnDate.toString()
+        );
     }
 
     @Test
@@ -163,6 +256,12 @@ public class LoanServiceImplTests {
     public void calculateFine_returnOnDueDate_returnsZero() {
         var fine = loanService.calculateFine(LocalDate.now(), LocalDate.now());
         assertThat(fine).isEqualTo(0.0);
+    }
+
+    @Test
+    public void calculateFine_returnLate_returnsFineAmount() {
+        var fine = loanService.calculateFine(LocalDate.now().minusDays(2), LocalDate.now());
+        assertThat(fine).isEqualTo(10.0);
     }
 
 }
