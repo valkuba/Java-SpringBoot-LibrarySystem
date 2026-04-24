@@ -13,10 +13,6 @@ public class BookClient {
     private String bookBaseUrl;
 
     public String resolveBookTitle(Long bookCopyId) {
-        if (bookCopyId == null) {
-            return "Unknown book";
-        }
-
         try {
             BookLookupResponse book = RestClient.create(bookBaseUrl)
                     .get()
