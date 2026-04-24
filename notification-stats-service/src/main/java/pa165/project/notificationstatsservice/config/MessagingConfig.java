@@ -28,11 +28,4 @@ public class MessagingConfig {
 
         return converter;
     }
-    /*@Bean
-    public MessageConverter messageConverter() {
-        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
-        converter.setTargetType(MessageType.TEXT);
-        converter.setTypeIdPropertyName("_type");
-        return converter;
-    }*/
 }
