@@ -22,12 +22,12 @@ services:
     ports:
       - "8081:8081"
 #
-#  member-service:
-#    build:
-#      context: .
-#      dockerfile: member-service/Dockerfile
-#    ports:
-#      - "8082:8082"
+  member-service:
+    build:
+      context: .
+      dockerfile: member-service/Dockerfile
+    ports:
+      - "8082:8082"
 #
 #  notification-stats-service:
 #    build:

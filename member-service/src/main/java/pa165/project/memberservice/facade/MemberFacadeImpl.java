@@ -9,6 +9,7 @@ import pa165.project.memberservice.service.MemberService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 @Component
 @RequiredArgsConstructor
 public class MemberFacadeImpl implements MemberFacade {
