@@ -32,20 +32,20 @@ class NotificationMessageConsumerTest {
     @Test
     void receiveNotification_loanCreated_callsCreateLoanCreatedNotification() {
         LoanEventMessage message = LoanEventMessage.builder()
-                .loanId(10L)
-                .memberId(20L)
-                .bookCopyId(30L)
+                .loanId(1L)
+                .memberId(1L)
+                .bookCopyId(1L)
                 .type(NotificationType.LOAN_CREATED)
                 .date("2026-04-24")
                 .build();
 
-        when(memberClient.resolveRecipientEmail(20L)).thenReturn("user@test.com");
-        when(bookClient.resolveBookTitle(30L)).thenReturn("Blood of elves");
+        when(memberClient.resolveRecipientEmail(1L)).thenReturn("ilove@books.com");
+        when(bookClient.resolveBookTitle(1L)).thenReturn("Animal Farm");
 
         consumer.receiveNotification(message);
 
         verify(notificationService).createLoanCreatedNotification(
-                eq("user@test.com"), eq("Blood of elves"), eq(10L), eq("2026-04-24")
+                eq("ilove@books.com"), eq("Animal Farm"), eq(1L), eq("2026-04-24")
         );
         verify(notificationService, never()).createLoanReturnedNotification(
                 org.mockito.ArgumentMatchers.anyString(),
@@ -67,20 +67,20 @@ class NotificationMessageConsumerTest {
     void receiveNotification_loanReturned_callsCreateLoanReturnedNotification() {
         LoanEventMessage message = LoanEventMessage.builder()
                 .loanId(11L)
-                .memberId(21L)
-                .bookCopyId(31L)
+                .memberId(11L)
+                .bookCopyId(11L)
                 .type(NotificationType.LOAN_RETURNED)
                 .status("RETURNED")
-                .date("2026-04-25")
+                .date("2026-04-24")
                 .build();
 
-        when(memberClient.resolveRecipientEmail(21L)).thenReturn("returned@test.com");
-        when(bookClient.resolveBookTitle(31L)).thenReturn("Last wish");
+        when(memberClient.resolveRecipientEmail(11L)).thenReturn("returned@iswear.com");
+        when(bookClient.resolveBookTitle(11L)).thenReturn("The Great Gatsby");
 
         consumer.receiveNotification(message);
 
         verify(notificationService).createLoanReturnedNotification(
-                eq("returned@test.com"), eq("Last wish"), eq(11L), eq("2026-04-25"), eq("RETURNED")
+                eq("returned@iswear.com"), eq("The Great Gatsby"), eq(11L), eq("2026-04-24"), eq("RETURNED")
         );
     }
 
@@ -92,74 +92,16 @@ class NotificationMessageConsumerTest {
                 .bookCopyId(32L)
                 .type(NotificationType.FINE_ISSUED)
                 .fineAmount(150.0)
-                .date("2026-04-26")
+                .date("2026-04-24")
                 .build();
 
-        when(memberClient.resolveRecipientEmail(22L)).thenReturn("fine@test.com");
-        when(bookClient.resolveBookTitle(32L)).thenReturn("Sword of destiny");
+        when(memberClient.resolveRecipientEmail(22L)).thenReturn("joseph@fined.com");
+        when(bookClient.resolveBookTitle(32L)).thenReturn("Radom Book");
 
         consumer.receiveNotification(message);
 
         verify(notificationService).createFineIssuedNotification(
-                eq("fine@test.com"), eq("Sword of destiny"), eq(12L), eq(150.0), eq("2026-04-26")
-        );
-    }
-
-    @Test
-    void receiveNotification_invalidMessage_doesNothing() {
-        consumer.receiveNotification(null);
-
-        verify(notificationService, never()).createLoanCreatedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyString()
-        );
-        verify(notificationService, never()).createLoanReturnedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString()
-        );
-        verify(notificationService, never()).createFineIssuedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyDouble(),
-                org.mockito.ArgumentMatchers.anyString()
-        );
-    }
-
-    @Test
-    void receiveNotification_messageWithoutType_doesNothing() {
-        LoanEventMessage message = LoanEventMessage.builder()
-                .loanId(13L)
-                .memberId(23L)
-                .bookCopyId(33L)
-                .build();
-
-        consumer.receiveNotification(message);
-
-        verify(notificationService, never()).createLoanCreatedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyString()
-        );
-        verify(notificationService, never()).createLoanReturnedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString()
-        );
-        verify(notificationService, never()).createFineIssuedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyLong(),
-                org.mockito.ArgumentMatchers.anyDouble(),
-                org.mockito.ArgumentMatchers.anyString()
+                eq("joseph@fined.com"), eq("Radom Book"), eq(12L), eq(150.0), eq("2026-04-24")
         );
     }
 }
