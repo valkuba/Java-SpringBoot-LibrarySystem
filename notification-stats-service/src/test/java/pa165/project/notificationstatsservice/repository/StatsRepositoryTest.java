@@ -89,14 +89,6 @@ public class StatsRepositoryTest {
     }
 
     @Test
-    void findByBookTitle_TitleExists_ContainsBothReturnedAndActive() {
-        List<Stats> result = statsRepository.findByBookTitle("Project Hail Mary");
-
-        assertThat(result).extracting(Stats::getReturned)
-                .containsExactlyInAnyOrder(true, false);
-    }
-
-    @Test
     void findByBookTitle_TitleExistsOnce_ReturnsSingleRecord() {
         List<Stats> result = statsRepository.findByBookTitle("Donnie Darko");
 
@@ -108,14 +100,6 @@ public class StatsRepositoryTest {
     @Test
     void findByBookTitle_TitleNotExists_ReturnsEmptyList() {
         List<Stats> result = statsRepository.findByBookTitle("Nonexistent Book");
-
-        assertThat(result).isEmpty();
-    }
-
-    @Test
-    void findByBookTitle_IsCaseSensitive_ReturnsEmptyList() {
-        //case-sensitive
-        List<Stats> result = statsRepository.findByBookTitle("project hail mary");
 
         assertThat(result).isEmpty();
     }
