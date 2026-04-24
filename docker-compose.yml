@@ -21,7 +21,14 @@ services:
       dockerfile: lending-service/Dockerfile
     ports:
       - "8081:8081"
-#
+    depends_on:
+      - artemis
+    environment:
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+      SPRING_ARTEMIS_USER: artemis
+      SPRING_ARTEMIS_PASSWORD: artemis
+      MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
+  #
 #  member-service:
 #    build:
 #      context: .
@@ -35,3 +42,11 @@ services:
       dockerfile: notification-stats-service/Dockerfile
     ports:
       - "8083:8083"
+    depends_on:
+      - artemis
+    environment:
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+      SPRING_ARTEMIS_USER: artemis
+      SPRING_ARTEMIS_PASSWORD: artemis
+      MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
+
