@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 @Slf4j
 @Service
@@ -13,6 +14,8 @@ public class MemberClient {
     private String memberBaseUrl;
 
     public String resolveRecipientEmail(Long memberId) {
+        if (memberId == null)
+            return "unknown-email-for-member-null";
         try {
             MemberLookupResponse member = RestClient.create(memberBaseUrl)
                     .get()
@@ -24,6 +27,10 @@ public class MemberClient {
                 return "unknown-email-for-member-" + memberId;
             }
             return member.email();
+        } catch (RestClientException ex) {
+            // catch when you cannot connect to the api uri
+            log.warn("Book lookup REST failed memberId={} reason={}", memberId, ex.getMessage());
+            return "unknown-email-for-member-" + memberId;
         } catch (Exception ex) {
             log.warn("Member lookup failed memberId={} reason={}", memberId, ex.getMessage());
             return "unknown-email-for-member-" + memberId;

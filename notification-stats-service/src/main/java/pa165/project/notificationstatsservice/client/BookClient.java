@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 @Slf4j
 @Service
@@ -13,6 +14,8 @@ public class BookClient {
     private String bookBaseUrl;
 
     public String resolveBookTitle(Long bookCopyId) {
+        if (bookCopyId == null)
+            return "Unknown Book";
         try {
             BookLookupResponse book = RestClient.create(bookBaseUrl)
                     .get()
@@ -25,6 +28,10 @@ public class BookClient {
             }
 
             return book.title();
+        } catch (RestClientException ex) {
+            // catch when you cannot connect to the api uri
+            log.warn("Book lookup REST failed bookCopyId={} reason={}", bookCopyId, ex.getMessage());
+            return "BookCopy #" + bookCopyId;
         } catch (Exception ex) {
             log.warn("Book lookup failed bookCopyId={} reason={}", bookCopyId, ex.getMessage());
             return "BookCopy #" + bookCopyId;
