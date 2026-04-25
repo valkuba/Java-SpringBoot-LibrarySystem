@@ -104,5 +104,25 @@ class NotificationMessageConsumerTest {
                 eq("joseph@fined.com"), eq("Radom Book"), eq(12L), eq(150.0), eq("2026-04-24")
         );
     }
-}
 
+    @Test
+    void receiveNotification_reservationCreated_callsCreateReservationCreatedNotification() {
+        LoanEventMessage message = LoanEventMessage.builder()
+                .loanId(50L)
+                .memberId(70L)
+                .bookCopyId(80L)
+                .type(NotificationType.RESERVATION_CREATED)
+                .date("2026-04-25")
+                .whenAvailableDate("2026-04-28")
+                .status("ACTIVE")
+                .build();
+
+        when(memberClient.resolveRecipientEmail(70L)).thenReturn("reservation@books.com");
+        when(bookClient.resolveBookTitle(80L)).thenReturn("Terrible Train Phantom");
+
+        consumer.receiveNotification(message);
+
+        verify(notificationService).createReservationCreatedNotification(eq("reservation@books.com"), eq("Terrible Train Phantom"), eq(50L), eq("2026-04-25"), eq("2026-04-28"), eq("ACTIVE")
+        );
+    }
+}
