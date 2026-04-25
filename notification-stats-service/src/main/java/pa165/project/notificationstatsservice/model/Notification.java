@@ -1,22 +1,48 @@
 package pa165.project.notificationstatsservice.model;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /* *
  * Class for Model of the notification
  * */
-
-@Data
+@Entity
+@Table(name="notification")
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
+@AllArgsConstructor
 public class Notification {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
     private String message;
+
+    @Column(nullable = false)
     private String recipientEmail;
+
     private LocalDateTime createdAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Notification that)) return false;
+        return Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId());
+    }
+
+    @PrePersist
+    public void onCreate() {
+        createdAt = LocalDateTime.now();
+    }
+
 }

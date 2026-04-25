@@ -11,6 +11,7 @@ import pa165.project.notificationstatsservice.dto.CreateNotificationDto;
 import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.facade.NotificationFacade;
 
+
 import java.util.List;
 
 /* *
@@ -64,4 +65,5 @@ public class NotificationRestController {
     public ResponseEntity<List<NotificationDto>> getAllSortedByDate() {
         return ResponseEntity.ok(notificationFacade.getAllSortedByDate());
     }
+
 }

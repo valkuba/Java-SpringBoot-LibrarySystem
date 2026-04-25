@@ -8,30 +8,46 @@ services:
     environment:
       ARTEMIS_USER: artemis
       ARTEMIS_PASSWORD: artemis
-#  book-service:
-#    build:
-#      context: .
-#      dockerfile: book-service/Dockerfile
-#    ports:
-#      - "8080:8080"
-#
+
+  book-service:
+    build:
+      context: .
+      dockerfile: book-service/Dockerfile
+    ports:
+      - "8080:8080"
+
   lending-service:
     build:
       context: .
       dockerfile: lending-service/Dockerfile
     ports:
       - "8081:8081"
-#
+    depends_on:
+      - artemis
+    environment:
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+      SPRING_ARTEMIS_USER: artemis
+      SPRING_ARTEMIS_PASSWORD: artemis
+      MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
+
   member-service:
     build:
       context: .
       dockerfile: member-service/Dockerfile
     ports:
       - "8082:8082"
-#
-#  notification-stats-service:
-#    build:
-#      context: .
-#      dockerfile: notification-stats-service/Dockerfile
-#    ports:
-#      - "8083:8083"
+
+  notification-stats-service:
+    build:
+      context: .
+      dockerfile: notification-stats-service/Dockerfile
+    ports:
+      - "8083:8083"
+    depends_on:
+      - artemis
+    environment:
+      SPRING_ARTEMIS_BROKER_URL: tcp://artemis:61616
+      SPRING_ARTEMIS_USER: artemis
+      SPRING_ARTEMIS_PASSWORD: artemis
+      MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
+

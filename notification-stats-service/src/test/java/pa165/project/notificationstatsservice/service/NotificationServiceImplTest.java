@@ -63,17 +63,17 @@ class NotificationServiceImplTest {
         Notification input = Notification.builder()
                 .message("Hello").recipientEmail("test@gmail.com").build();
 
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> i.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createNotification(input);
 
         assertThat(result.getCreatedAt()).isNotNull();
-        verify(notificationRepository).saveNotification(input);
+        verify(notificationRepository).save(input);
     }
 
     @Test
     void createOverdueNotification_shouldContainBookTitle() {
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> {
+        when(notificationRepository.save(any())).thenAnswer(i -> {
                 Notification n = i.getArgument(0);
                 n.setId(1L);
                 return n;
@@ -89,7 +89,7 @@ class NotificationServiceImplTest {
 
     @Test
     void createOverdueNotification_shouldContainOverdueWord() {
-        when(notificationRepository.saveNotification(any())).thenAnswer(i -> i.getArgument(0));
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl
                 .createOverdueNotification("test@gmail.com", "Blood of the elves");
@@ -129,5 +129,44 @@ class NotificationServiceImplTest {
         List<Notification> result = notificationServiceImpl.getAllSortedByDate();
 
         assertThat(result).hasSize(1);
+    }
+
+    @Test
+    void createLoanCreatedNotification_shouldCreateExpectedMessage() {
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Notification result = notificationServiceImpl.createLoanCreatedNotification(
+                "test@gmail.com", "Blood of the elves", 10L, "2026-04-24");
+
+        assertThat(result.getMessage()).isEqualTo("Loan 10 for 'Blood of the elves' was created on 2026-04-24.");
+        assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
+        assertThat(result.getCreatedAt()).isNotNull();
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    void createLoanReturnedNotification_shouldCreateExpectedMessage() {
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Notification result = notificationServiceImpl.createLoanReturnedNotification(
+                "test@gmail.com", "Blood of the elves", 11L, "2026-04-25", "RETURNED");
+
+        assertThat(result.getMessage()).isEqualTo("Loan 11 for 'Blood of the elves' was returned on 2026-04-25. Status: RETURNED.");
+        assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
+        assertThat(result.getCreatedAt()).isNotNull();
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    void createFineIssuedNotification_shouldCreateExpectedMessage() {
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Notification result = notificationServiceImpl.createFineIssuedNotification(
+                "test@gmail.com", "Blood of the elves", 12L, 150.0, "2026-04-26");
+
+        assertThat(result.getMessage()).isEqualTo("Fine of 150.0 CZK was issued for loan 12 ('Blood of the elves') on 2026-04-26.");
+        assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
+        assertThat(result.getCreatedAt()).isNotNull();
+        verify(notificationRepository).save(any(Notification.class));
     }
 }
