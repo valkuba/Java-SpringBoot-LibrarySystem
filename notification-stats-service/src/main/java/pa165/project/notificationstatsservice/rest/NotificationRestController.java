@@ -4,18 +4,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.web.bind.annotation.*;
 import pa165.project.notificationstatsservice.dto.CreateNotificationDto;
 import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.facade.NotificationFacade;
-import pa165.project.notificationstatsservice.messaging.LoanEventMessage;
-import pa165.project.notificationstatsservice.messaging.NotificationType;
 
-import java.time.LocalDate;
+
 import java.util.List;
 
 /* *
@@ -70,23 +66,4 @@ public class NotificationRestController {
         return ResponseEntity.ok(notificationFacade.getAllSortedByDate());
     }
 
-    // test producer to verify consumer mapping flow
-    @Autowired
-    private JmsTemplate jmsTemplate;
-
-    @PostMapping("/test-jms")
-    @Operation(summary = "Test JMS - send loan event message")
-    public ResponseEntity<String> testJms() {
-        LoanEventMessage msg = LoanEventMessage.builder()
-                .loanId(1L)
-                .memberId(1L)
-                .bookCopyId(1L)
-                .type(NotificationType.LOAN_CREATED)
-                .status("LOANED")
-                .date(LocalDate.now().toString())
-                .build();
-
-        jmsTemplate.convertAndSend("loan-events-queue", msg);
-        return ResponseEntity.ok("Message sent");
-    }
 }
