@@ -10,9 +10,9 @@ import pa165.project.memberservice.dto.MemberDto;
 import pa165.project.memberservice.dto.NewMemberRegisteringDto;
 import pa165.project.memberservice.mapper.MemberMapper;
 import pa165.project.memberservice.model.Member;
+import pa165.project.memberservice.model.exception.MemberUpdateException;
 import pa165.project.memberservice.service.MemberService;
-import pa165.project.memberservice.repository.MemberRepositoryException;
-import pa165.project.memberservice.model.MemberUpdateException;
+import pa165.project.memberservice.service.exception.MemberServiceException;
 
 import java.util.List;
 import java.util.Optional;
@@ -108,7 +108,7 @@ class MemberFacadeImplTest {
     }
 
     @Test
-    void updateMember_shouldReturnUpdatedDto() throws MemberRepositoryException, MemberUpdateException {
+    void updateMember_shouldReturnUpdatedDto() throws MemberServiceException, MemberUpdateException {
         when(memberMapper.toModel(testMemberDto)).thenReturn(testMemberModel);
         when(memberService.updateMember(testMemberModel)).thenReturn(testMemberModel);
         when(memberMapper.toDto(testMemberModel)).thenReturn(testMemberDto);

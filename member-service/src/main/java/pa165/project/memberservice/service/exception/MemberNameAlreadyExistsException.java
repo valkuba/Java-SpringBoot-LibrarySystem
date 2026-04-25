@@ -1,6 +1,6 @@
-package pa165.project.memberservice.repository;
+package pa165.project.memberservice.service.exception;
 
-public class MemberNameAlreadyExistsException extends MemberRepositoryException {
+public class MemberNameAlreadyExistsException extends MemberServiceException {
     public MemberNameAlreadyExistsException(String username) {
         super("Member with username " + username + " already exists");
     }

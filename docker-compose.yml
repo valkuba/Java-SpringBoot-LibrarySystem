@@ -8,13 +8,14 @@ services:
     environment:
       ARTEMIS_USER: artemis
       ARTEMIS_PASSWORD: artemis
-#  book-service:
-#    build:
-#      context: .
-#      dockerfile: book-service/Dockerfile
-#    ports:
-#      - "8080:8080"
-#
+
+  book-service:
+    build:
+      context: .
+      dockerfile: book-service/Dockerfile
+    ports:
+      - "8080:8080"
+
   lending-service:
     build:
       context: .
@@ -28,14 +29,14 @@ services:
       SPRING_ARTEMIS_USER: artemis
       SPRING_ARTEMIS_PASSWORD: artemis
       MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
-  #
-#  member-service:
-#    build:
-#      context: .
-#      dockerfile: member-service/Dockerfile
-#    ports:
-#      - "8082:8082"
-#
+
+  member-service:
+    build:
+      context: .
+      dockerfile: member-service/Dockerfile
+    ports:
+      - "8082:8082"
+
   notification-stats-service:
     build:
       context: .
