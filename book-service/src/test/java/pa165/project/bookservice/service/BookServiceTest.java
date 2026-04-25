@@ -10,6 +10,7 @@ import pa165.project.bookservice.model.Book;
 import pa165.project.bookservice.repository.BookRepository;
 import pa165.project.bookservice.util.TestDataFactory;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -122,8 +123,8 @@ public class BookServiceTest {
 
     @Test
     void searchBooks_BookFoundByAuthor_ReturnsBook() {
-        Mockito.when(bookRepository.findAll())
-                .thenReturn(TestDataFactory.bookEntities);
+        Mockito.when(bookRepository.findByAuthor(TestDataFactory.bookEntities.get(0).getAuthor()))
+                .thenReturn(List.of(TestDataFactory.bookEntities.get(0)));
 
         List<Book> foundEntities = bookService.searchBooks(null, TestDataFactory.bookEntities.get(0).getAuthor(), null);
 
@@ -132,8 +133,8 @@ public class BookServiceTest {
 
     @Test
     void searchBooks_BookNotFoundByAuthor_ReturnsEmpty() {
-        Mockito.when(bookRepository.findAll())
-                .thenReturn(TestDataFactory.bookEntities);
+        Mockito.when(bookRepository.findByAuthor("Not the author"))
+                .thenReturn(Collections.emptyList());
 
         List<Book> foundEntities = bookService.searchBooks(null, "Not the author", null);
 
