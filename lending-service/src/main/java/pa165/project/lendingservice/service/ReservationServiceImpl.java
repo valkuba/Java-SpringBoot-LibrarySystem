@@ -2,6 +2,7 @@ package pa165.project.lendingservice.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import pa165.project.lendingservice.model.Reservation;
 import pa165.project.lendingservice.repository.ReservationRepository;
 
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationRepository reservationRepository;
+    private final LendingMessageProducer lendingMessageProducer;
 
     @Override
     public List<Reservation> getAllReservations() {
@@ -36,12 +38,31 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public Reservation createReservation(Reservation reservation) {
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        lendingMessageProducer.sendReservationCreated(
+                savedReservation.getId(),
+                savedReservation.getMemberId(),
+                savedReservation.getBookId(),
+                savedReservation.getWhenAvailableDate().toString()
+        );
+
+        return savedReservation;
     }
 
     @Override
     public Reservation updateReservation(Reservation reservation) {
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        lendingMessageProducer.sendReservationUpdated(
+                savedReservation.getId(),
+                savedReservation.getMemberId(),
+                savedReservation.getBookId(),
+                savedReservation.getStatus(),
+                savedReservation.getWhenAvailableDate().toString()
+        );
+
+        return savedReservation;
     }
 
     @Override

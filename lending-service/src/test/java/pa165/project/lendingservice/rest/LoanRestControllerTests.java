@@ -10,6 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.facade.LoanFacade;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -35,6 +36,9 @@ public class LoanRestControllerTests {
 
     @MockitoBean
     private LoanFacade loanFacade;
+
+    @MockitoBean
+    private LendingMessageProducer lendingMessageProducer;
 
     private final JsonMapper jsonMapper = JsonMapper.builder()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

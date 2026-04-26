@@ -6,17 +6,39 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LoanMessageProducer {
+public class LendingMessageProducer {
 
     private final JmsTemplate jmsTemplate;
 
-    @Value("${messaging.queue.loan-events}")
+    @Value("${messaging.queue.notification-events}")
     private String queueName;
+
+    public void sendReservationCreated(Long reservationId, Long memberId, Long bookCopyId, String reservationDate) {
+        var message = ReservationEventMessage.builder()
+                .reservationId(reservationId)
+                .memberId(memberId)
+                .bookCopyId(bookCopyId)
+                .type(NotificationType.RESERVATION_CREATED)
+                .date(reservationDate)
+                .build();
+        send(message);
+    }
+
+    public void sendReservationUpdated(Long reservationId, Long memberId, Long bookCopyId, String status, String reservationDate) {
+        var message = ReservationEventMessage.builder()
+                .reservationId(reservationId)
+                .memberId(memberId)
+                .bookCopyId(bookCopyId)
+                .type(NotificationType.RESERVATION_UPDATED)
+                .status(status)
+                .date(reservationDate)
+                .build();
+        send(message);
+    }
+
 
     public void sendLoanCreated(Long loanId, Long memberId, Long bookCopyId, String loanDate) {
         var message = LoanEventMessage.builder()
@@ -50,6 +72,11 @@ public class LoanMessageProducer {
                 .date(date)
                 .build();
         send(message);
+    }
+
+    private void send(ReservationEventMessage message) {
+        log.info("Sending JMS message: {}", message);
+        jmsTemplate.convertAndSend(queueName, message);
     }
 
     private void send(LoanEventMessage message) {

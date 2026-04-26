@@ -6,6 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import pa165.project.lendingservice.model.Reservation;
 import pa165.project.lendingservice.repository.ReservationRepository;
 
@@ -22,6 +23,9 @@ public class ReservationServiceImplTests {
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
+
+    @Mock
+    private LendingMessageProducer lendingMessageProducer;
 
     @Test
     public void getAllReservations_reservationsExist_returnsAllReservations() {
@@ -101,27 +105,70 @@ public class ReservationServiceImplTests {
     }
 
     @Test
-    public void createReservation_validReservation_savesAndReturnsReservation() {
-        Mockito.when(reservationRepository.save(Mockito.any(Reservation.class))).thenReturn(Reservation.builder().id(1L).build());
+    public void createReservation_validReservation_savesAndSendsMessage() {
+        var input = Reservation.builder()
+                .memberId(10L)
+                .bookId(20L)
+                .whenAvailableDate(java.time.LocalDate.of(2026, 1, 10))
+                .build();
 
-        var reservation = reservationService.createReservation(Reservation.builder().id(1L).build());
+        var saved = Reservation.builder()
+                .id(1L)
+                .memberId(10L)
+                .bookId(20L)
+                .whenAvailableDate(java.time.LocalDate.of(2026, 1, 10))
+                .build();
 
-        assertThat(reservation.getId()).isEqualTo(1L);
+        Mockito.when(reservationRepository.save(Mockito.any(Reservation.class)))
+                .thenReturn(saved);
+
+        var result = reservationService.createReservation(input);
+
+        assertThat(result.getId()).isEqualTo(1L);
+
+        Mockito.verify(lendingMessageProducer, Mockito.times(1))
+                .sendReservationCreated(
+                        Mockito.eq(1L),
+                        Mockito.eq(10L),
+                        Mockito.eq(20L),
+                        Mockito.eq("2026-01-10")
+                );
     }
 
     @Test
-    public void updateReservation_existingReservation_returnsUpdatedReservation() {
-        Mockito.when(reservationRepository.save(Mockito.any(Reservation.class))).thenReturn(Reservation.builder().id(1L).memberId(2L).build());
+    public void updateReservation_validReservation_savesAndSendsMessage() {
+        var input = Reservation.builder()
+                .id(1L)
+                .memberId(10L)
+                .bookId(20L)
+                .status("UPDATED")
+                .whenAvailableDate(java.time.LocalDate.of(2026, 1, 10))
+                .build();
 
-        var reservation = reservationService.updateReservation(Reservation.builder().id(1L).memberId(2L).build());
+        Mockito.when(reservationRepository.save(Mockito.any(Reservation.class)))
+                .thenReturn(input);
 
-        assertThat(reservation.getMemberId()).isEqualTo(2L);
+        var result = reservationService.updateReservation(input);
+
+        assertThat(result.getStatus()).isEqualTo("UPDATED");
+
+        Mockito.verify(lendingMessageProducer, Mockito.times(1))
+                .sendReservationUpdated(
+                        Mockito.eq(1L),
+                        Mockito.eq(10L),
+                        Mockito.eq(20L),
+                        Mockito.eq("UPDATED"),
+                        Mockito.eq("2026-01-10")
+                );
     }
 
     @Test
-    public void deleteReservation_existingId_callsRepositoryDeleteById() {
+    public void deleteReservation_existingId_callsRepositoryButNoMessage() {
         reservationService.deleteReservation(1L);
 
-        Mockito.verify(reservationRepository, Mockito.times(1)).deleteById(1L);
+        Mockito.verify(reservationRepository, Mockito.times(1))
+                .deleteById(1L);
+
+        Mockito.verifyNoInteractions(lendingMessageProducer);
     }
 }

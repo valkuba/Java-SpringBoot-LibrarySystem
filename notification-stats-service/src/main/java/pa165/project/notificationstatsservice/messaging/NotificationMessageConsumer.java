@@ -1,8 +1,12 @@
 package pa165.project.notificationstatsservice.messaging;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pa165.project.notificationstatsservice.client.BookClient;
@@ -13,16 +17,20 @@ import pa165.project.notificationstatsservice.service.NotificationService;
 @Service
 @RequiredArgsConstructor
 public class NotificationMessageConsumer {
+    @Autowired
+    private MessageConverter messageConverter;
+
     private final NotificationService notificationService;
     private final MemberClient memberClient;
     private final BookClient bookClient;
 
     @JmsListener(destination = "${messaging.queue.notification-events}")
     @Transactional
-    public void receiveNotification(Object rawMsg) {
-        if (rawMsg instanceof LoanEventMessage msg) {
+    public void receiveNotification(Object rawMsg) throws JMSException {
+        Object converted = messageConverter.fromMessage((Message) rawMsg);
+        if (converted instanceof LoanEventMessage msg) {
             handleLoanEvent(msg);
-        } else if (rawMsg instanceof ReservationEventMessage msg) {
+        } else if (converted instanceof ReservationEventMessage msg) {
             handleReservationEvent(msg);
         } else {
             log.warn("Received unknown message type: {}", rawMsg);
