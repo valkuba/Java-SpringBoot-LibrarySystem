@@ -50,4 +50,6 @@ services:
       SPRING_ARTEMIS_USER: artemis
       SPRING_ARTEMIS_PASSWORD: artemis
       MESSAGING_QUEUE_LOAN_EVENTS: loan-events-queue
+      SERVICES_MEMBER_BASE_URL: http://member-service:8082
+      SERVICES_BOOK_BASE_URL: http://book-service:8080
 

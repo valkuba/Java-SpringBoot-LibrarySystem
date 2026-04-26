@@ -74,6 +74,15 @@ public class NotificationServiceImpl implements NotificationService {
         return createFromMessage(recipientEmail, message);
     }
 
+    @Transactional
+    @Override
+    public Notification createReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
+                                                            String reservationDate, String whenAvailableDate, String status) {
+        String message = "Reservation " + reservationId + " for '" + bookTitle + "' was created on " + reservationDate
+                + ". Available on: " + whenAvailableDate + ". Status: " + status + ".";
+        return createFromMessage(recipientEmail, message);
+    }
+
     private Notification createFromMessage(String recipientEmail, String message) {
         Notification notification = new Notification();
         notification.setRecipientEmail(recipientEmail);

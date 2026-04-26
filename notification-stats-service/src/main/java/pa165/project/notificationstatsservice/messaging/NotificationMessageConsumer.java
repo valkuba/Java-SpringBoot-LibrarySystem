@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pa165.project.notificationstatsservice.client.BookClient;
 import pa165.project.notificationstatsservice.client.MemberClient;
 import pa165.project.notificationstatsservice.service.NotificationService;
@@ -16,6 +17,7 @@ public class NotificationMessageConsumer {
     private final MemberClient memberClient;
     private final BookClient bookClient;
 
+    @Transactional
     @JmsListener(destination = "${messaging.queue.loan-events}")
     public void receiveNotification(LoanEventMessage msg) {
         if (msg == null || msg.getType() == null) {
@@ -33,6 +35,8 @@ public class NotificationMessageConsumer {
                     recipientEmail, bookTitle, msg.getLoanId(), msg.getDate(), msg.getStatus());
             case FINE_ISSUED -> notificationService.createFineIssuedNotification(
                     recipientEmail, bookTitle, msg.getLoanId(), msg.getFineAmount(), msg.getDate());
+            case RESERVATION_CREATED -> notificationService.createReservationCreatedNotification(
+                    recipientEmail, bookTitle, msg.getLoanId(), msg.getDate(), msg.getWhenAvailableDate(), msg.getStatus());
             default -> log.warn("Unsupported event type={} for loanId={}", msg.getType(), msg.getLoanId());
         }
 

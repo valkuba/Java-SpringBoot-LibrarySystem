@@ -169,4 +169,18 @@ class NotificationServiceImplTest {
         assertThat(result.getCreatedAt()).isNotNull();
         verify(notificationRepository).save(any(Notification.class));
     }
+
+    @Test
+    void createReservationCreatedNotification_shouldCreateExpectedMessage() {
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Notification result = notificationServiceImpl.createReservationCreatedNotification(
+                "test@gmail.com", "Blood of the elves", 13L, "2026-04-27", "2026-04-30", "ACTIVE");
+
+        assertThat(result.getMessage()).isEqualTo(
+                "Reservation 13 for 'Blood of the elves' was created on 2026-04-27. Available on: 2026-04-30. Status: ACTIVE.");
+        assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
+        assertThat(result.getCreatedAt()).isNotNull();
+        verify(notificationRepository).save(any(Notification.class));
+    }
 }

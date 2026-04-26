@@ -13,5 +13,7 @@ public interface NotificationService {
     Notification createLoanCreatedNotification(String recipientEmail, String bookTitle, Long loanId, String loanDate);
     Notification createLoanReturnedNotification(String recipientEmail, String bookTitle, Long loanId, String returnDate, String status);
     Notification createFineIssuedNotification(String recipientEmail, String bookTitle, Long loanId, Double fineAmount, String date);
+    Notification createReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
+                                                      String reservationDate, String whenAvailableDate, String status);
     List<Notification> getAllSortedByDate();
 }
