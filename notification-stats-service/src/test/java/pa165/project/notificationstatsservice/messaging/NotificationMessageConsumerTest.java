@@ -9,6 +9,8 @@ import pa165.project.notificationstatsservice.client.BookClient;
 import pa165.project.notificationstatsservice.client.MemberClient;
 import pa165.project.notificationstatsservice.service.NotificationService;
 
+import java.time.LocalDate;
+
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -49,13 +51,11 @@ class NotificationMessageConsumerTest {
         );
         verify(notificationService, never()).createLoanReturnedNotification(
                 org.mockito.ArgumentMatchers.anyString(),
-                org.mockito.ArgumentMatchers.anyString(),
                 org.mockito.ArgumentMatchers.anyLong(),
                 org.mockito.ArgumentMatchers.anyString(),
                 org.mockito.ArgumentMatchers.anyString()
         );
         verify(notificationService, never()).createFineIssuedNotification(
-                org.mockito.ArgumentMatchers.anyString(),
                 org.mockito.ArgumentMatchers.anyString(),
                 org.mockito.ArgumentMatchers.anyLong(),
                 org.mockito.ArgumentMatchers.anyDouble(),
@@ -75,12 +75,12 @@ class NotificationMessageConsumerTest {
                 .build();
 
         when(memberClient.resolveRecipientEmail(11L)).thenReturn("returned@iswear.com");
-        when(bookClient.resolveBookTitle(11L)).thenReturn("The Great Gatsby");
+        when(bookClient.resolveBookTitle(11L)).thenReturn("Unknown Book");
 
         consumer.receiveNotification(message);
 
         verify(notificationService).createLoanReturnedNotification(
-                eq("returned@iswear.com"), eq("The Great Gatsby"), eq(11L), eq("2026-04-24"), eq("RETURNED")
+                eq("returned@iswear.com"), eq(11L), eq("2026-04-24"), eq("RETURNED")
         );
     }
 
@@ -96,24 +96,24 @@ class NotificationMessageConsumerTest {
                 .build();
 
         when(memberClient.resolveRecipientEmail(22L)).thenReturn("joseph@fined.com");
-        when(bookClient.resolveBookTitle(32L)).thenReturn("Radom Book");
+        when(bookClient.resolveBookTitle(32L)).thenReturn("Unknown Book");
 
         consumer.receiveNotification(message);
 
         verify(notificationService).createFineIssuedNotification(
-                eq("joseph@fined.com"), eq("Radom Book"), eq(12L), eq(150.0), eq("2026-04-24")
+                eq("joseph@fined.com"), eq(12L), eq(150.0), eq("2026-04-24")
         );
     }
 
     @Test
     void receiveNotification_reservationCreated_callsCreateReservationCreatedNotification() {
-        LoanEventMessage message = LoanEventMessage.builder()
-                .loanId(50L)
+        ReservationEventMessage message = ReservationEventMessage.builder()
+                .reservationId(50L)
                 .memberId(70L)
                 .bookCopyId(80L)
                 .type(NotificationType.RESERVATION_CREATED)
                 .date("2026-04-25")
-                .whenAvailableDate("2026-04-28")
+                .whenAvailableDate(LocalDate.parse("2026-04-28"))
                 .status("ACTIVE")
                 .build();
 

@@ -24,6 +24,10 @@ public class MessagingConfig {
             "pa165.project.lendingservice.messaging.LoanEventMessage",
             pa165.project.notificationstatsservice.messaging.LoanEventMessage.class
         );
+        typeIdMappings.put(
+                "pa165.project.lendingservice.messaging.ReservationEventMessage",  // název třídy v lending
+                pa165.project.notificationstatsservice.messaging.ReservationEventMessage.class
+        );
         converter.setTypeIdMappings(typeIdMappings);
 
         return converter;

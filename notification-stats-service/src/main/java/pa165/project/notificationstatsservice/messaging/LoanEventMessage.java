@@ -11,15 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoanEventMessage {
-    @JsonAlias({"loanId", "id"})
     private Long loanId;
     private Long memberId;
-    @JsonAlias({"bookCopyId", "bookId"})
     private Long bookCopyId;
     private NotificationType type;
     private Double fineAmount;
     private String status;
-    @JsonAlias({"date", "reservationDate"})
     private String date;
-    private String whenAvailableDate;
 }

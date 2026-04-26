@@ -11,9 +11,11 @@ public interface NotificationService {
     void deleteNotification(Long id);
     Notification createOverdueNotification(String recipientEmail, String bookTitle);
     Notification createLoanCreatedNotification(String recipientEmail, String bookTitle, Long loanId, String loanDate);
-    Notification createLoanReturnedNotification(String recipientEmail, String bookTitle, Long loanId, String returnDate, String status);
-    Notification createFineIssuedNotification(String recipientEmail, String bookTitle, Long loanId, Double fineAmount, String date);
+    Notification createLoanReturnedNotification(String recipientEmail, Long loanId, String returnDate, String status);
+    Notification createFineIssuedNotification(String recipientEmail, Long loanId, Double fineAmount, String date);
     Notification createReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
+                                                      String reservationDate, String whenAvailableDate, String status);
+    Notification updateReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
                                                       String reservationDate, String whenAvailableDate, String status);
     List<Notification> getAllSortedByDate();
 }
