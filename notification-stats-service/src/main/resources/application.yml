@@ -24,7 +24,7 @@ spring:
 
 messaging:
   queue:
-    loan-events: loan-events-queue
+    notification-events: notification-events-queue
 
 server:
   port: 8083

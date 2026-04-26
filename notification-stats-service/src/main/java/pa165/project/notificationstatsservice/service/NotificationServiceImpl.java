@@ -62,15 +62,15 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Transactional
     @Override
-    public Notification createLoanReturnedNotification(String recipientEmail, String bookTitle, Long loanId, String returnDate, String status) {
-        String message = "Loan " + loanId + " was returned on " + returnDate + ". Status: " + status + ".";
+    public Notification createLoanReturnedNotification(String recipientEmail, Long loanId, String returnDate, String status) {
+        String message = "Loan " + loanId + "' was returned on " + returnDate + ". Status: " + status + ".";
         return createFromMessage(recipientEmail, message);
     }
 
     @Transactional
     @Override
-    public Notification createFineIssuedNotification(String recipientEmail, String bookTitle, Long loanId, Double fineAmount, String date) {
-        String message = "Fine of " + fineAmount + " CZK was issued for loan " + loanId + " on " + date + ".";
+    public Notification createFineIssuedNotification(String recipientEmail, Long loanId, Double fineAmount, String date) {
+        String message = "Fine of " + fineAmount + " CZK was issued for loan " + loanId + "  on " + date + ".";
         return createFromMessage(recipientEmail, message);
     }
 
@@ -82,6 +82,16 @@ public class NotificationServiceImpl implements NotificationService {
                 + ". Available on: " + whenAvailableDate + ". Status: " + status + ".";
         return createFromMessage(recipientEmail, message);
     }
+
+    @Transactional
+    @Override
+    public Notification updateReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
+                                                             String reservationDate, String whenAvailableDate, String status) {
+        String message = "Reservation " + reservationId + " for '" + bookTitle + "' was updated on " + reservationDate
+                + ". Available on: " + whenAvailableDate + ". Status: " + status + ".";
+        return createFromMessage(recipientEmail, message);
+    }
+
 
     private Notification createFromMessage(String recipientEmail, String message) {
         Notification notification = new Notification();
