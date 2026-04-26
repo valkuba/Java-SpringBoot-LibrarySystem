@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pa165.project.lendingservice.config.LoanConstants;
-import pa165.project.lendingservice.messaging.LoanMessageProducer;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import pa165.project.lendingservice.model.Fine;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.repository.FineRepository;
@@ -21,7 +21,7 @@ public class LoanServiceImpl implements LoanService {
 
     private final LoanRepository loanRepository;
     private final FineRepository fineRepository;
-    private final LoanMessageProducer loanMessageProducer;
+    private final LendingMessageProducer lendingMessageProducer;
 
     @Override
     public List<Loan> getAllLoans() {
@@ -42,7 +42,7 @@ public class LoanServiceImpl implements LoanService {
 
         Loan savedLoan = loanRepository.save(loan);
 
-        loanMessageProducer.sendLoanCreated(
+        lendingMessageProducer.sendLoanCreated(
                 savedLoan.getId(),
                 savedLoan.getMemberId(),
                 savedLoan.getBookCopyId(),
@@ -93,7 +93,7 @@ public class LoanServiceImpl implements LoanService {
 
             fineRepository.save(fine);
 
-            loanMessageProducer.sendFineIssued(
+            lendingMessageProducer.sendFineIssued(
                     loan.getId(),
                     loan.getMemberId(),
                     fine.getAmount(),
@@ -103,7 +103,7 @@ public class LoanServiceImpl implements LoanService {
 
         Loan saved = loanRepository.save(loan);
 
-        loanMessageProducer.sendLoanReturned(
+        lendingMessageProducer.sendLoanReturned(
                 saved.getId(),
                 saved.getMemberId(),
                 actualReturnDate.toString()

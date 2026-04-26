@@ -10,6 +10,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.FineDto;
 import pa165.project.lendingservice.facade.FineFacadeImpl;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.PropertyNamingStrategies;
 import tools.jackson.databind.json.JsonMapper;
@@ -34,6 +35,9 @@ public class FineRestControllerTests {
 
     @MockitoBean
     private FineFacadeImpl personFacade;
+
+    @MockitoBean
+    private LendingMessageProducer lendingMessageProducer;
 
     private final JsonMapper jsonMapper = JsonMapper.builder()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

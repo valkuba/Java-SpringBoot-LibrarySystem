@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.LoanDto;
 import pa165.project.lendingservice.dto.ReservationDto;
 import pa165.project.lendingservice.facade.ReservationFacade;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -34,6 +35,9 @@ public class ReservationRestControllerTests {
 
     @MockitoBean
     private ReservationFacade reservationFacade;
+
+    @MockitoBean
+    private LendingMessageProducer lendingMessageProducer;
 
     private final JsonMapper jsonMapper = JsonMapper.builder()
             .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)

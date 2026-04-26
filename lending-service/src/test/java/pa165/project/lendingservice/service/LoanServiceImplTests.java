@@ -6,7 +6,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import pa165.project.lendingservice.messaging.LoanMessageProducer;
+import pa165.project.lendingservice.messaging.LendingMessageProducer;
 import pa165.project.lendingservice.model.Loan;
 import pa165.project.lendingservice.repository.FineRepository;
 import pa165.project.lendingservice.repository.LoanRepository;
@@ -31,7 +31,7 @@ public class LoanServiceImplTests {
     private LoanServiceImpl loanService;
 
     @Mock
-    private LoanMessageProducer loanMessageProducer;
+    private LendingMessageProducer loanMessageProducer;
 
     @Test
     public void getAllLoans_loansExist_returnsAllLoans() {
