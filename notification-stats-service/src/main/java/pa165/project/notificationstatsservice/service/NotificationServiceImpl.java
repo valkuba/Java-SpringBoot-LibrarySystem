@@ -63,7 +63,7 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public Notification createLoanReturnedNotification(String recipientEmail, String bookTitle, Long loanId, String returnDate, String status) {
-        String message = "Loan " + loanId + "' was returned on " + returnDate + ". Status: " + status + ".";
+        String message = "Loan " + loanId + " was returned on " + returnDate + ". Status: " + status + ".";
         return createFromMessage(recipientEmail, message);
     }
 
