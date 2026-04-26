@@ -149,7 +149,7 @@ class NotificationServiceImplTest {
         when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createLoanReturnedNotification(
-                "test@gmail.com", "Blood of the elves", 11L, "2026-04-25", "RETURNED");
+                "test@gmail.com",  11L, "2026-04-25", "RETURNED");
 
         assertThat(result.getMessage()).isEqualTo("Loan 11 for 'Blood of the elves' was returned on 2026-04-25. Status: RETURNED.");
         assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
@@ -162,7 +162,7 @@ class NotificationServiceImplTest {
         when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createFineIssuedNotification(
-                "test@gmail.com", "Blood of the elves", 12L, 150.0, "2026-04-26");
+                "test@gmail.com", 12L, 150.0, "2026-04-26");
 
         assertThat(result.getMessage()).isEqualTo("Fine of 150.0 CZK was issued for loan 12 ('Blood of the elves') on 2026-04-26.");
         assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
@@ -180,6 +180,20 @@ class NotificationServiceImplTest {
         assertThat(result.getMessage()).isEqualTo(
                 "Reservation 13 for 'Blood of the elves' was created on 2026-04-27. Available on: 2026-04-30. Status: ACTIVE.");
         assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
+        assertThat(result.getCreatedAt()).isNotNull();
+        verify(notificationRepository).save(any(Notification.class));
+    }
+
+    @Test
+    void updateReservationCreatedNotification_shouldCreateExpectedMessage() {
+        when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+
+        Notification result = notificationServiceImpl.updateReservationCreatedNotification(
+                "test@test.com", "Please let me go", 13L, "2026-04-27", "2026-04-30", "ACTIVE");
+
+        assertThat(result.getMessage()).isEqualTo(
+                "Reservation 13 for 'Please let me go' was updated on 2026-04-27. Available on: 2026-04-30. Status: ACTIVE.");
+        assertThat(result.getRecipientEmail()).isEqualTo("test@test.com");
         assertThat(result.getCreatedAt()).isNotNull();
         verify(notificationRepository).save(any(Notification.class));
     }
