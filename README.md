@@ -49,6 +49,12 @@ cd lending-service
 mvn spring-boot:run
 ```
 
+### Run tests
+```bash
+# Run all tests from the root directory
+mvn test
+```
+
 ### Run entire system with Podman or Docker
 ```bash
 # Start all services using Podman Compose
@@ -60,7 +66,16 @@ podman-compose up --build
 podman-compose down
 ```
 
-Each service exposes its REST API documentation via Swagger UI at the URL listed above.
+```bash
+# Start all services using Docker Compose
+docker-compose up --build
+
+# Stop all services
+docker-compose down
+
+```
+
+Each service exposes its REST API documented via Swagger UI at the URL listed above.
 
 ---
 
@@ -97,6 +112,9 @@ The **Lending Service** produces messages to an ActiveMQ Artemis queue when a lo
 The **Notification and Statistics Service** consumes these messages asynchronously and stores them in its database.
 
 The JMS configuration is externalized in `application.yml` of each service.
+
+## Persistence
+All microservices implement the persistence layer using Spring Data JPA. Each service uses its own separate H2 in-memory database to ensure data isolation.
 
 ---
 

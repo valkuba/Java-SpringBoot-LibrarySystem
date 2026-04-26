@@ -111,7 +111,4 @@ public class BookRepositoryTest {
         assertThat(books).hasSize(1);
         assertThat(books.get(0).getTitle()).isEqualTo("Java in Enterprise");
     }
-
-
-
 }

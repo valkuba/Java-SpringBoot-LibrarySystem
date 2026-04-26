@@ -16,7 +16,7 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    @Transactional(readOnly = true) // to preserve ACID
+    @Transactional(readOnly = true)
     @Override
     public List<Book> getAllBooks() {
         return bookRepository.findAll();
@@ -76,22 +76,29 @@ public class BookServiceImpl implements BookService {
         for(int i = 0; i < 12; i++) {
             int digit = Character.getNumericValue(isbn.charAt(i));
 
-            if(i % 2 == 0) {
-                sum += digit;
-            } else {
-                sum += digit * 3;
-            }
+            sum += (i % 2 == 0) ? digit : digit * 3;
         }
 
-        int checkDigit = (10 - (sum % 10)) % 10; // calculate the check digit
-        return checkDigit == Character.getNumericValue(isbn.charAt(12)); // check if the check digit is correct
+        int checkDigit = (10 - (sum % 10)) % 10;
+        return checkDigit == Character.getNumericValue(isbn.charAt(12));
     }
 
     @Transactional(readOnly = true)
     @Override
     public List<Book> searchBooks(String title, String author, String genre) {
-        return bookRepository.findAll().stream()
-                .filter(b -> title == null || b.getTitle().toLowerCase().contains(title.toLowerCase())) // null -> ignore filter
+        List<Book> candidates;
+
+        if (title != null) {
+            candidates = bookRepository.findByTitle(title);
+        } else if (author != null) {
+            candidates = bookRepository.findByAuthor(author);
+        } else if (genre != null) {
+            candidates = bookRepository.findByGenre(genre);
+        } else {
+            return bookRepository.findAll();
+        }
+
+        return candidates.stream()
                 .filter(b -> author == null || b.getAuthor().toLowerCase().contains(author.toLowerCase()))
                 .filter(b -> genre == null || b.getGenre().toLowerCase().contains(genre.toLowerCase()))
                 .collect(Collectors.toList());
