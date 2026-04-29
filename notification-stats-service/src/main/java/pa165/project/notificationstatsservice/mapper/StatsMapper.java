@@ -14,6 +14,7 @@ public class StatsMapper {
     public StatsDto toDto(Stats stats) {
         return StatsDto.builder()
                 .id(stats.getId())
+                .bookId(stats.getBookId())
                 .bookTitle(stats.getBookTitle())
                 .returned(stats.getReturned())
                 .build();

@@ -50,5 +50,25 @@ public class StatsServiceImpl implements StatsService {
                         LinkedHashMap::new
                 ));
     }
-}
 
+    @Transactional
+    @Override
+    public void recordLoan(Long bookId, String bookTitle) {
+        Stats stats = Stats.builder()
+                .bookId(bookId)
+                .bookTitle(bookTitle)
+                .returned(false)
+                .build();
+        statsRepository.save(stats);
+    }
+
+    @Transactional
+    @Override
+    public void markReturned(Long bookId) {
+        statsRepository.findFirstByBookIdAndReturnedFalse(bookId)
+                .ifPresent(stats -> {
+                    stats.setReturned(true);
+                    statsRepository.save(stats);
+                });
+    }
+}

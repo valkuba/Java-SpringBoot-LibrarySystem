@@ -19,6 +19,9 @@ public class StatsDto {
     @Schema(description = "Unique identifier of the statistics record")
     private Long id;
 
+    @Schema(description = "Unique identifier of book from book-service")
+    private Long bookId;
+
     @Schema(description = "Title of the book which stats we want")
     private String bookTitle;
 

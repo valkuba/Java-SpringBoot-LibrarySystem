@@ -11,4 +11,6 @@ import java.util.Map;
 public interface StatsService {
     List<Stats> getAllStats();
     Map<String, Long> getTopNBooks(int limit);
+    void recordLoan(Long bookId, String bookTitle);
+    void markReturned(Long bookId);
 }
