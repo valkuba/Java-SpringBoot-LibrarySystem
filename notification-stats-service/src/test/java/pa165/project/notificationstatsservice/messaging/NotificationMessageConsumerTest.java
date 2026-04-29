@@ -11,8 +11,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.test.util.ReflectionTestUtils;
 import pa165.project.notificationstatsservice.client.BookClient;
+import pa165.project.notificationstatsservice.client.LendingClient;
 import pa165.project.notificationstatsservice.client.MemberClient;
 import pa165.project.notificationstatsservice.service.NotificationService;
+import pa165.project.notificationstatsservice.service.StatsService;
 
 import java.time.LocalDate;
 
@@ -32,6 +34,12 @@ class NotificationMessageConsumerTest {
 
     @Mock
     private BookClient bookClient;
+
+    @Mock
+    private LendingClient lendingClient;
+
+    @Mock
+    private StatsService statsService;
 
     @Mock
     private MessageConverter messageConverter;
@@ -65,30 +73,34 @@ class NotificationMessageConsumerTest {
                 eq("ilove@books.com"), eq("Animal Farm"), eq(1L), eq("2026-04-24")
         );
         verify(notificationService, never()).createLoanReturnedNotification(
-                anyString(), anyLong(), anyString(), anyString()
+                anyString(), anyLong(), anyString(), anyString(), anyString()
         );
         verify(notificationService, never()).createFineIssuedNotification(
-                anyString(), anyLong(), anyDouble(), anyString()
+                anyString(), anyLong(), anyString(), anyDouble(), anyString()
         );
+        verify(statsService).recordLoan(eq(1L), eq("Animal Farm"));
     }
 
     @Test
     void receiveNotification_loanReturned_callsCreateLoanReturnedNotification() throws JMSException {
         LoanEventMessage message = LoanEventMessage.builder()
-                .loanId(11L).memberId(11L).bookCopyId(11L)
+                .loanId(11L).memberId(11L)
                 .type(NotificationType.LOAN_RETURNED)
                 .status("RETURNED").date("2026-04-24")
                 .build();
 
         when(messageConverter.fromMessage(rawMessage)).thenReturn(message);
         when(memberClient.resolveRecipientEmail(11L)).thenReturn("returned@iswear.com");
-        when(bookClient.resolveBookTitle(11L)).thenReturn("Unknown Book");
+        when(lendingClient.resolveBookId(11L)).thenReturn(11L);
+        when(bookClient.resolveBookTitle(11L)).thenReturn("Animal Farm");
 
         consumer.receiveNotification(rawMessage);
 
         verify(notificationService).createLoanReturnedNotification(
-                eq("returned@iswear.com"), eq(11L), eq("2026-04-24"), eq("RETURNED")
+                eq("returned@iswear.com"), eq(11L), eq("Animal Farm"), eq("2026-04-24"), eq("RETURNED")
         );
+
+        verify(statsService).markReturned(eq(11L));
     }
 
     @Test
@@ -101,12 +113,13 @@ class NotificationMessageConsumerTest {
 
         when(messageConverter.fromMessage(rawMessage)).thenReturn(message);
         when(memberClient.resolveRecipientEmail(22L)).thenReturn("joseph@fined.com");
-        when(bookClient.resolveBookTitle(32L)).thenReturn("Unknown Book");
+        when(lendingClient.resolveBookId(12L)).thenReturn(32L);
+        when(bookClient.resolveBookTitle(32L)).thenReturn("Animal Farm");
 
         consumer.receiveNotification(rawMessage);
 
         verify(notificationService).createFineIssuedNotification(
-                eq("joseph@fined.com"), eq(12L), eq(150.0), eq("2026-04-24")
+                eq("joseph@fined.com"), eq(12L), eq("Animal Farm"), eq(150.0), eq("2026-04-24")
         );
     }
 

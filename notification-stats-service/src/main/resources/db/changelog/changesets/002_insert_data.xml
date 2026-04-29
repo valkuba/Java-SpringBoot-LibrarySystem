@@ -17,14 +17,14 @@
 
         <!-- Loan returned -->
         <insert tableName="notification">
-            <column name="message" value="Loan 1 was returned on 2026-04-27. Status: RETURNED."/>
+            <column name="message" value="Loan 1 for book 'Kitchen Confidential' was returned on 2026-04-27. Status: RETURNED."/>
             <column name="recipient_email" value="saymyname@yahoo.com"/>
             <column name="created_at" value="2026-04-28 14:00:00"/>
         </insert>
 
         <!-- Fine issued -->
         <insert tableName="notification">
-            <column name="message" value="Fine of 50.0 CZK was issued for loan 1 on 2026-04-28."/>
+            <column name="message" value="Fine of 50.0 CZK was issued for loan 1 ('Kitchen Confidential') on 2026-04-28."/>
             <column name="recipient_email" value="uniquename@google.com"/>
             <column name="created_at" value="2026-04-29 08:30:00"/>
         </insert>

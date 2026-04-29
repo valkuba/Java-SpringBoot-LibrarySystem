@@ -52,4 +52,5 @@ services:
       MESSAGING_QUEUE_NOTIFICATION_EVENTS: notification-events-queue
       SERVICES_MEMBER_BASE_URL: http://member-service:8082
       SERVICES_BOOK_BASE_URL: http://book-service:8080
+      SERVICES_LENDING_BASE_URL: http://lending-service:8081
 
