@@ -6,6 +6,3 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ['book-service:8080']
-
-
-

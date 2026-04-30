@@ -294,6 +294,11 @@
     },
     {
       "datasource": {},
+      "fieldConfig": {
+        "defaults": {
+          "unit": "bytes"
+        }
+      },
       "gridPos": {
         "h": 8,
         "w": 24,
@@ -308,8 +313,8 @@
             "uid": "p5SIZnEVk"
           },
           "editorMode": "code",
-          "expr": "jvm_memory_used_bytes{job=\"book-service\"}",
-          "legendFormat": "Used Memory",
+          "expr": "sum(jvm_memory_used_bytes{job=\"book-service\", area=\"heap\"})",
+          "legendFormat": "Used Heap Memory",
           "range": true,
           "refId": "A"
         },
@@ -319,13 +324,13 @@
             "uid": "p5SIZnEVk"
           },
           "editorMode": "code",
-          "expr": "jvm_memory_max_bytes{job=\"book-service\"}",
-          "legendFormat": "Max Memory",
+          "expr": "sum(jvm_memory_max_bytes{job=\"book-service\", area=\"heap\"})",
+          "legendFormat": "Max Heap Memory",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "JVM Memory Usage (Bytes)",
+      "title": "JVM Memory Usage",
       "type": "timeseries"
     }
   ],
