@@ -6,3 +6,18 @@ scrape_configs:
     metrics_path: /actuator/prometheus
     static_configs:
       - targets: ['book-service:8080']
+
+  # - job_name: 'lending-service'
+  #   metrics_path: /actuator/prometheus
+  #   static_configs:
+  #     - targets: ['lending-service:8081']
+
+  # - job_name: 'member-service'
+  #   metrics_path: /actuator/prometheus
+  #   static_configs:
+  #     - targets: ['member-service:8082']
+
+  # - job_name: 'notification-stats-service'
+  #   metrics_path: /actuator/prometheus
+  #   static_configs:
+  #     - targets: ['notification-stats-service:8083']
