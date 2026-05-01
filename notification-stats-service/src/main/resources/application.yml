@@ -21,9 +21,15 @@ spring:
     user: artemis
     password: artemis
 
-
   jms:
     pub-sub-domain: false
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://id.muni.cz/oidc/
+          audiences: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
 
 messaging:
   queue:
