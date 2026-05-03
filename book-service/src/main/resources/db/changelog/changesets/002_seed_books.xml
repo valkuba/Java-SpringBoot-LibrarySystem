@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="002" author="xpap">
+        <comment>Create the seeds for the table</comment>
+        <insert tableName="books">
+            <column name="title" value="The last wish"/>
+            <column name="author" value="Andrzej Sapkowski"/>
+            <column name="isbn" value="9780135957059"/>
+            <column name="genre" value="Fantasy"/>
+            <column name="description" value="A book about a witcher"/>
+            <column name="available_copies" valueNumeric="10"/>
+            <column name="year_publication" valueNumeric="1993"/>
+        </insert>
+        <insert tableName="books">
+            <column name="title" value="Blood of elves"/>
+            <column name="author" value="Andrzej Sapkowski"/>
+            <column name="isbn" value="9780132350884"/>
+            <column name="genre" value="Fantasy"/>
+            <column name="description" value="A second book about a long awaited witcher"/>
+            <column name="available_copies" valueNumeric="15"/>
+            <column name="year_publication" valueNumeric="1994"/>
+        </insert>
+        <insert tableName="books">
+            <column name="title" value="Design Patterns"/>
+            <column name="author" value="Gang of Four"/>
+            <column name="isbn" value="9780201633610"/>
+            <column name="genre" value="Architecture"/>
+            <column name="description" value="Elements of reusable object-oriented software"/>
+            <column name="available_copies" valueNumeric="3"/>
+            <column name="year_publication" valueNumeric="1994"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

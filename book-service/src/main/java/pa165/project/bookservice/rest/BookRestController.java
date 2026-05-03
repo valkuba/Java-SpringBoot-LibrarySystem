@@ -1,6 +1,7 @@
 package pa165.project.bookservice.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pa165.project.bookservice.dto.BookDto;
 import pa165.project.bookservice.facade.BookFacade;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import pa165.project.bookservice.security.SecurityConfig;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,6 +20,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/books")
 @RequiredArgsConstructor
 @Tag(name = "Book", description = "Book management API")
+@SecurityRequirement(name = SecurityConfig.SECURITY_SCHEME_NAME)
 public class BookRestController {
 
     private final BookFacade bookFacade;

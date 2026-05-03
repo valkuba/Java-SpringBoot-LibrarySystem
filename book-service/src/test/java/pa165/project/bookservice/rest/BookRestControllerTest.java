@@ -17,6 +17,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 
 /* *
  * Test for the controller layer
@@ -30,6 +31,9 @@ public class BookRestControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @org.springframework.test.context.bean.override.mockito.MockitoBean
+    private org.springframework.security.oauth2.jwt.JwtDecoder jwtDecoder;
+
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -37,6 +41,7 @@ public class BookRestControllerTest {
     // Just to keep code a bit cleaner
     private BookDto createBookHelper(BookDto bookDto) throws Exception {
         String response = mockMvc.perform(post("/api/books")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(bookDto)))
                 .andExpect(status().isCreated())
@@ -47,7 +52,8 @@ public class BookRestControllerTest {
     @Test
     void getAllBooks_BooksFound_ReturnsListOfBooks() throws Exception {
         // Only checks response code 200 and valid JSON (returns 0 books, because no book was created)
-        String response = mockMvc.perform(get("/api/books"))
+        String response = mockMvc.perform(get("/api/books")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_read"))))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -62,7 +68,8 @@ public class BookRestControllerTest {
         BookDto bookDto = TestDataFactory.bookDtos.get(0);
         Long createdId = createBookHelper(bookDto).getId();
 
-        String response = mockMvc.perform(get("/api/books/{id}", createdId))
+        String response = mockMvc.perform(get("/api/books/{id}", createdId)
+                        .with(jwt().jwt(token -> token.claim("scope", "test_read"))))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
 
@@ -73,7 +80,8 @@ public class BookRestControllerTest {
 
     @Test
     void getBookById_BookNotFound_Returns404() throws Exception {
-        mockMvc.perform(get("/api/books/676767"))
+        mockMvc.perform(get("/api/books/676767")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_read"))))
                 .andExpect(status().isNotFound());
     }
 
@@ -101,6 +109,7 @@ public class BookRestControllerTest {
                 .build();
 
         mockMvc.perform(post("/api/books")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidBookDto)))
                 .andExpect(status().isBadRequest());
@@ -112,6 +121,7 @@ public class BookRestControllerTest {
         BookDto updatedBookDto = TestDataFactory.bookDtos.get(1);
 
         String response = mockMvc.perform(put("/api/books/{id}", createdBook.getId())
+                        .with(jwt().jwt(token -> token.claim("scope", "test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updatedBookDto)))
                 .andExpect(status().isOk())
@@ -125,6 +135,7 @@ public class BookRestControllerTest {
     @Test
     void updateBook_BookNotFound_Returns404() throws Exception {
         mockMvc.perform(put("/api/books/676767")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(TestDataFactory.bookDtos.get(0))))
                 .andExpect(status().isNotFound());
@@ -134,7 +145,8 @@ public class BookRestControllerTest {
     void deleteBook_BookDeleted_ReturnsNoContent() throws Exception {
         BookDto createdBook = createBookHelper(TestDataFactory.bookDtos.get(0));
 
-        mockMvc.perform(delete("/api/books/{id}", createdBook.getId()))
+        mockMvc.perform(delete("/api/books/{id}", createdBook.getId())
+                        .with(jwt().jwt(token -> token.claim("scope", "test_1"))))
                 .andExpect(status().isNoContent());
     }
 
@@ -144,6 +156,7 @@ public class BookRestControllerTest {
         String title = createdBook.getTitle();
 
         String response = mockMvc.perform(get("/api/books/search")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_read")))
                         .param("title", title))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
@@ -156,6 +169,7 @@ public class BookRestControllerTest {
     @Test
     void searchBooks_NoResults_ReturnsEmptyList() throws Exception {
         String response = mockMvc.perform(get("/api/books/search")
+                        .with(jwt().jwt(token -> token.claim("scope", "test_read")))
                         .param("title", "TitleThatIJustMadeUp123"))
                 .andExpect(status().isOk())
                 .andReturn().getResponse().getContentAsString();
