@@ -1,6 +1,7 @@
 package pa165.project.lendingservice.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import pa165.project.lendingservice.facade.FineFacade;
 import java.util.List;
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
 @RequestMapping("/api/fines")
 @RequiredArgsConstructor
 @Tag(name = "Fine", description = "Fine Management API")

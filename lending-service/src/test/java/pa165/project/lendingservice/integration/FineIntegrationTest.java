@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.FineDto;
@@ -13,6 +14,7 @@ import tools.jackson.databind.json.JsonMapper;
 
 import java.time.LocalDate;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,6 +42,7 @@ public class FineIntegrationTest {
 
         // CREATE
         var responseJson = mockMvc.perform(post("/api/fines")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(fine)))
                 .andExpect(status().isCreated())
@@ -48,7 +51,8 @@ public class FineIntegrationTest {
         var created = jsonMapper.readValue(responseJson, FineDto.class);
 
         // GET
-        mockMvc.perform(get("/api/fines/{id}", created.getId()))
+        mockMvc.perform(get("/api/fines/{id}", created.getId())
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberId").value(10L))
                 .andExpect(jsonPath("$.status").value("UNPAID"));

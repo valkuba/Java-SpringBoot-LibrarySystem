@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.LoanDto;
@@ -19,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -52,6 +54,7 @@ public class ReservationRestControllerTests {
         ));
 
         var responseJson = mockMvc.perform(get("/api/reservations")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -69,6 +72,7 @@ public class ReservationRestControllerTests {
         Mockito.when(reservationFacade.getReservationById(1L)).thenReturn(Optional.of(ReservationDto.builder().id(1L).build()));
 
         var responseJson = mockMvc.perform(get("/api/reservations/{id}",1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -86,6 +90,7 @@ public class ReservationRestControllerTests {
         Mockito.when(reservationFacade.getReservationById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/reservations/{id}",1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -98,6 +103,7 @@ public class ReservationRestControllerTests {
         ));
 
         var responseJson = mockMvc.perform(get("/api/reservations/member/{memberId}", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -120,6 +126,7 @@ public class ReservationRestControllerTests {
         ));
 
         var responseJson = mockMvc.perform(get("/api/reservations/book/{bookId}", 10L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -138,6 +145,7 @@ public class ReservationRestControllerTests {
         Mockito.when(reservationFacade.createReservation(Mockito.any())).thenReturn(ReservationDto.builder().id(1L).memberId(1L).status("UNPAID").build());
 
         var responseJson = mockMvc.perform(post("/api/reservations")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("UNPAID").build()))
                         .accept(MediaType.APPLICATION_JSON))
@@ -157,6 +165,7 @@ public class ReservationRestControllerTests {
         Mockito.when(reservationFacade.updateReservation(Mockito.any())).thenReturn(ReservationDto.builder().id(1L).memberId(1L).status("LOANED").build());
 
         var responseJson = mockMvc.perform(put("/api/reservations/{id}", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("LOANED").build()))
                         .accept(MediaType.APPLICATION_JSON))
@@ -175,6 +184,7 @@ public class ReservationRestControllerTests {
     @Test
     public void deleteReservation_existingId_returnsNoContent() throws Exception {
         mockMvc.perform(delete("/api/reservations/{id}", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
