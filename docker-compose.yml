@@ -75,3 +75,4 @@ services:
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml
       - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
       - ./book-service/grafana.json:/var/lib/grafana/dashboards/grafana.json
+      - ./notification-stats-service/notification-stats-grafana.json:/var/lib/grafana/dashboards/notification-stats-grafana.json

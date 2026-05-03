@@ -1,5 +1,9 @@
 package pa165.project.notificationstatsservice.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
@@ -27,6 +30,12 @@ class NotificationServiceImplTest {
 
     @InjectMocks
     private NotificationServiceImpl notificationServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        notificationServiceImpl = new NotificationServiceImpl(notificationRepository, new SimpleMeterRegistry());
+        notificationServiceImpl.init();
+    }
 
     @Test
     void getAllNotifications_shouldReturnAllNotifications() {

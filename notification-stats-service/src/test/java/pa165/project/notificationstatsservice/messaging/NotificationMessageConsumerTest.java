@@ -1,5 +1,6 @@
 package pa165.project.notificationstatsservice.messaging;
 
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,11 +48,20 @@ class NotificationMessageConsumerTest {
     @Mock
     private Message rawMessage;
 
-    @InjectMocks
     private NotificationMessageConsumer consumer;
 
     @BeforeEach
     void setUp() {
+        consumer = new NotificationMessageConsumer(
+                messageConverter,
+                notificationService,
+                memberClient,
+                bookClient,
+                lendingClient,
+                statsService,
+                new SimpleMeterRegistry()
+        );
+        consumer.init();
         ReflectionTestUtils.setField(consumer, "messageConverter", messageConverter);
     }
 

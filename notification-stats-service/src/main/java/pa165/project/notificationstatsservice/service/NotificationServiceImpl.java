@@ -1,6 +1,10 @@
 package pa165.project.notificationstatsservice.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pa165.project.notificationstatsservice.model.Notification;
@@ -19,6 +23,17 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    private final MeterRegistry meterRegistry;
+
+    private Counter notificationCreatedCounter;
+
+    @PostConstruct
+    public void init() {
+        notificationCreatedCounter = Counter.builder("notifications.created.total")
+                .description("Total number of notifications created")
+                .register(meterRegistry);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<Notification> getAllNotifications() {
@@ -34,6 +49,8 @@ public class NotificationServiceImpl implements NotificationService {
     @Transactional
     @Override
     public Notification createNotification(Notification notification) {
+        notificationCreatedCounter.increment();
+
         notification.setCreatedAt(LocalDateTime.now());
         return notificationRepository.save(notification);
     }
@@ -94,6 +111,8 @@ public class NotificationServiceImpl implements NotificationService {
 
 
     private Notification createFromMessage(String recipientEmail, String message) {
+        notificationCreatedCounter.increment();
+
         Notification notification = new Notification();
         notification.setRecipientEmail(recipientEmail);
         notification.setMessage(message);

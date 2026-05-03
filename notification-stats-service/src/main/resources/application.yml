@@ -31,6 +31,15 @@ spring:
           issuer-uri: https://id.muni.cz/oidc/
           audiences: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+
 messaging:
   queue:
     notification-events: notification-events-queue

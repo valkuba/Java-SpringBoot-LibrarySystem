@@ -1,5 +1,8 @@
 package pa165.project.notificationstatsservice.messaging;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import jakarta.jms.JMSException;
 import jakarta.jms.Message;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +30,21 @@ public class NotificationMessageConsumer {
     private final LendingClient lendingClient;
     private final StatsService statsService;
 
+    private final MeterRegistry meterRegistry;
+    private Counter jmsMessagesReceivedCounter;
+
+    @PostConstruct
+    public void init() {
+        jmsMessagesReceivedCounter = Counter.builder("jms.messages.received.total")
+                .description("Total number of JMS messages received")
+                .register(meterRegistry);
+    }
+
     @JmsListener(destination = "${messaging.queue.notification-events}")
     @Transactional
     public void receiveNotification(Object rawMsg) throws JMSException {
+        jmsMessagesReceivedCounter.increment();
+
         Object converted = messageConverter.fromMessage((Message) rawMsg);
         if (converted instanceof LoanEventMessage msg) {
             handleLoanEvent(msg);
