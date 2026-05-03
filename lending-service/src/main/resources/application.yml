@@ -42,6 +42,15 @@ springdoc:
         - test_read
         - test_write
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
+
 messaging:
   queue:
     notification-events: notification-events-queue
