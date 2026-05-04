@@ -1,7 +1,16 @@
 spring:
   application:
     name: member-service
+  datasource:
+    url: jdbc:h2:mem:memberdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 server:
   port: 8082
-

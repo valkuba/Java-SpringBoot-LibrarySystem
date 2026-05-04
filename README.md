@@ -91,6 +91,8 @@ The project is equally divided into 4 microservices, each owned by one team memb
 ### 2. Member Service (port 8082)
 - Managing member accounts (username, email, password)
 - Sign in / sign up (authentication)
+- Liquibase-managed schema and automatic seeding with 10 members on every startup
+- Admin endpoints: `POST /api/admin/seed`, `POST /api/admin/reseed`, `DELETE /api/admin/clear`
 
 ### 3. Lending Service (port 8081)
 - Management of the lifecycle of borrowing transactions and reservations
