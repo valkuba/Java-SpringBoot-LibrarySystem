@@ -52,4 +52,28 @@ services:
       MESSAGING_QUEUE_NOTIFICATION_EVENTS: notification-events-queue
       SERVICES_MEMBER_BASE_URL: http://member-service:8082
       SERVICES_BOOK_BASE_URL: http://book-service:8080
+      SERVICES_LENDING_BASE_URL: http://lending-service:8081
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:z
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
+    volumes:
+      - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:z
+      - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:z
+      - ./book-service/grafana.json:/var/lib/grafana/dashboards/grafana.json:z
+      - ./notification-stats-service/notification-stats-grafana.json:/var/lib/grafana/dashboards/notification-stats-grafana.json:z
+      - ./member-service/grafana.json:/var/lib/grafana/dashboards/member-grafana.json:z
