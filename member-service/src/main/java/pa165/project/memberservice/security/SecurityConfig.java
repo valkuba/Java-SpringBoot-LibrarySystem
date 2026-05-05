@@ -24,16 +24,20 @@ import static org.springframework.security.oauth2.core.authorization.OAuth2Autho
 @EnableMethodSecurity
 public class SecurityConfig {
     public static final String SECURITY_SCHEME_NAME = "MUNI";
-    public static final String SCOPE_VISITOR = "hasAuthority('SCOPE_test_2')";
-    public static final String SCOPE_MEMBER = "hasAuthority('SCOPE_test_3')";
-    public static final String SCOPE_ADMIN = "hasAuthority('SCOPE_test_4')";
+    public static final String AUTHORITY_VISITOR = "SCOPE_test_2";
+    public static final String AUTHORITY_MEMBER = "SCOPE_test_3";
+    public static final String AUTHORITY_ADMIN = "SCOPE_test_4";
+    public static final String SCOPE_VISITOR = "hasAuthority('" + AUTHORITY_VISITOR + "')";
+    public static final String SCOPE_MEMBER = "hasAuthority('" + AUTHORITY_MEMBER + "')";
+    public static final String SCOPE_ADMIN = "hasAuthority('" + AUTHORITY_ADMIN + "')";
 
     /**
      * Configure access restrictions to the API.
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(x -> x
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(x -> x
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/actuator/**", "/error").permitAll()
                         .anyRequest().authenticated()
                 )
