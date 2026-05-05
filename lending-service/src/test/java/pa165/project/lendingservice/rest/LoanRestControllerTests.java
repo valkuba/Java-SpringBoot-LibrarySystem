@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.dto.LoanDto;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -53,6 +55,7 @@ public class LoanRestControllerTests {
         ));
 
         var responseJson = mockMvc.perform(get("/api/loans")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -70,6 +73,7 @@ public class LoanRestControllerTests {
         Mockito.when(loanFacade.getLoanById(1L)).thenReturn(Optional.of(LoanDto.builder().id(1L).build()));
 
         var responseJson = mockMvc.perform(get("/api/loans/{id}",1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -87,6 +91,7 @@ public class LoanRestControllerTests {
         Mockito.when(loanFacade.getLoanById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/loans/{id}",1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -96,6 +101,7 @@ public class LoanRestControllerTests {
         Mockito.when(loanFacade.createLoan(Mockito.any())).thenReturn(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("UNPAID").build());
 
         var responseJson = mockMvc.perform(post("/api/loans")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("UNPAID").build()))
                         .accept(MediaType.APPLICATION_JSON))
@@ -115,6 +121,7 @@ public class LoanRestControllerTests {
         Mockito.when(loanFacade.updateLoan(Mockito.eq(1L),Mockito.any())).thenReturn(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("LOANED").build());
 
         var responseJson = mockMvc.perform(put("/api/loans/{id}", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(LoanDto.builder().id(1L).memberId(1L).bookCopyId(1L).status("LOANED").build()))
                         .accept(MediaType.APPLICATION_JSON))
@@ -136,6 +143,7 @@ public class LoanRestControllerTests {
                 .thenReturn(LoanDto.builder().id(1L).returnDate(returnDate).status("RETURNED").build());
 
         var responseJson = mockMvc.perform(put("/api/loans/{id}/return", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .param("returnDate", returnDate.toString())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -153,6 +161,7 @@ public class LoanRestControllerTests {
     @Test
     public void deleteLend_existingId_returnsNoContent() throws Exception {
         mockMvc.perform(delete("/api/loans/{id}", 1L)
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
@@ -167,6 +176,7 @@ public class LoanRestControllerTests {
             ));
 
             var responseJson = mockMvc.perform(get("/api/loans/search")
+                            .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                             .param("memberId", "1")
                             .param("bookCopyId", "2")
                             .accept(MediaType.APPLICATION_JSON))

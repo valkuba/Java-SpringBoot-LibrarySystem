@@ -10,18 +10,46 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+    defer-datasource-initialization: true
     properties:
       hibernate.format_sql: true
+  sql:
+    init:
+      mode: always
   h2:
     console:
       enabled: true
       path: /h2-console
-
   artemis:
     mode: native
     broker-url: tcp://localhost:61616
     user: artemis
     password: artemis
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://id.muni.cz/oidc/
+          audiences: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
+
+springdoc:
+  swagger-ui:
+    oauth:
+      client-id: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
+      client-secret: 48a2b2e3-4b2b-471e-b7b7-b81a85b6eeef22f347f2-3fc9-4e16-8698-3e2492701a89
+      scopes:
+        - openid
+        - test_read
+        - test_write
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
 
 messaging:
   queue:
