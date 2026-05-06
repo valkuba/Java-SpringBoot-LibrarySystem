@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.20.xsd">
+
+    <changeSet id="002" author="xvales">
+        <comment>Insert test data</comment>
+
+        <!-- Notifications -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 1 for 'Kitchen Confidential' was created on 2026-04-27."/>
+            <column name="recipient_email" value="saymyname@yahoo.com"/>
+            <column name="created_at" value="2026-04-28 09:00:00"/>
+        </insert>
+
+        <!-- Loan returned -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 1 for book 'Kitchen Confidential' was returned on 2026-04-27. Status: RETURNED."/>
+            <column name="recipient_email" value="saymyname@yahoo.com"/>
+            <column name="created_at" value="2026-04-28 14:00:00"/>
+        </insert>
+
+        <!-- Fine issued -->
+        <insert tableName="notification">
+            <column name="message" value="Fine of 50.0 CZK was issued for loan 1 ('Kitchen Confidential') on 2026-04-28."/>
+            <column name="recipient_email" value="uniquename@google.com"/>
+            <column name="created_at" value="2026-04-29 08:30:00"/>
+        </insert>
+
+        <!-- Reservation created -->
+        <insert tableName="notification">
+            <column name="message" value="Reservation 1 for 'Kitchen Confidential' was created on 2026-04-29. Available on: 2026-04-30. Status: ACTIVE."/>
+            <column name="recipient_email" value="uniquename@google.com"/>
+            <column name="created_at" value="2026-04-29 11:00:00"/>
+        </insert>
+
+        <!-- Reservation updated -->
+        <insert tableName="notification">
+            <column name="message" value="Reservation 1 for 'Kitchen Confidential' was updated on 2026-04-29. Available on: 2026-04-30. Status: UPDATED."/>
+            <column name="recipient_email" value="uniquename@google.com"/>
+            <column name="created_at" value="2026-04-29 16:45:00"/>
+        </insert>
+
+        <!-- Stats -->
+        <insert tableName="stats">
+            <column name="book_id" value="1"/>
+            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="returned" value="true"/>
+        </insert>
+        <insert tableName="stats">
+            <column name="book_id" value="2"/>
+            <column name="book_title" value="Fight Club"/>
+            <column name="returned" value="false"/>
+        </insert>
+        <insert tableName="stats">
+            <column name="book_id" value="3"/>
+            <column name="book_title" value="The Green Mile"/>
+            <column name="returned" value="true"/>
+        </insert>
+        <insert tableName="stats">
+            <column name="book_id" value="1"/>
+            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="returned" value="false"/>
+        </insert>
+
+        <insert tableName="stats">
+            <column name="book_id" value="1"/>
+            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="returned" value="false"/>
+        </insert>
+
+        <insert tableName="stats">
+            <column name="book_id" value="1"/>
+            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="returned" value="false"/>
+        </insert>
+
+        <insert tableName="stats">
+            <column name="book_id" value="1"/>
+            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="returned" value="false"/>
+        </insert>
+
+        <insert tableName="stats">
+            <column name="book_id" value="2"/>
+            <column name="book_title" value="Fight Club"/>
+            <column name="returned" value="false"/>
+        </insert>
+
+    </changeSet>
+</databaseChangeLog>

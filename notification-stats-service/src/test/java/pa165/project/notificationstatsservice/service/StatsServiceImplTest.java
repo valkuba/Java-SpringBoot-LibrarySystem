@@ -1,10 +1,15 @@
 package pa165.project.notificationstatsservice.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import pa165.project.notificationstatsservice.model.Notification;
 import pa165.project.notificationstatsservice.model.Stats;
 import pa165.project.notificationstatsservice.repository.StatsRepository;
 
@@ -13,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StatsServiceImplTest {
@@ -23,6 +29,12 @@ class StatsServiceImplTest {
 
     @InjectMocks
     private StatsServiceImpl statsServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        statsServiceImpl = new StatsServiceImpl(statsRepository, new SimpleMeterRegistry());
+        statsServiceImpl.init();
+    }
 
     @Test
     void getAllStats_shouldReturnAllStats() {
@@ -99,6 +111,34 @@ class StatsServiceImplTest {
         Map<String, Long> result = statsServiceImpl.getTopNBooks(100);
 
         assertThat(result).hasSize(1); // only 1 book exists
+    }
+
+    @Test
+    void recordLoan_shouldSaveStatsWithProvidedValues() {
+        statsServiceImpl.recordLoan(10L, "Blood of elves");
+
+        verify(statsRepository).save(argThat(stats ->
+                stats.getBookId().equals(10L) &&
+                        "Blood of elves".equals(stats.getBookTitle()) &&
+                        Boolean.FALSE.equals(stats.getReturned())
+        ));
+    }
+
+    @Test
+    void markReturned_whenActiveLoanExists_shouldMarkReturnedAndSave() {
+        Stats current = Stats.builder()
+                .bookId(10L)
+                .bookTitle("Blood of elves")
+                .returned(false)
+                .build();
+
+        when(statsRepository.findFirstByBookIdAndReturnedFalse(10L))
+                .thenReturn(java.util.Optional.of(current));
+
+        statsServiceImpl.markReturned(10L);
+
+        assertThat(current.getReturned()).isTrue();
+        verify(statsRepository).save(current);
     }
 
 }

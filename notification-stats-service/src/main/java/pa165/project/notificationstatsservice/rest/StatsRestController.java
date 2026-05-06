@@ -1,6 +1,7 @@
 package pa165.project.notificationstatsservice.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,8 @@ import java.util.List;
  * */
 
 @RestController
+@SecurityRequirement(name = "bearerAuth")
+//#@SecurityRequirement(name = "MUNI")
 @RequestMapping("/api/stats")
 @RequiredArgsConstructor
 @Tag(name = "Statistics API", description = "API for managing statistics")

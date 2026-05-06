@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pa165.project.notificationstatsservice.model.Stats;
 import java.util.List;
+import java.util.Optional;
 
 /* *
  * Interface definition for Statistics repository
@@ -18,4 +19,6 @@ public interface StatsRepository extends JpaRepository<Stats, Long> {
 
     @Query("SELECT s.bookTitle, COUNT(s) as borrowCount FROM Stats s GROUP BY s.bookTitle ORDER BY borrowCount DESC")
     List<Object[]> findBookBorrowCounts();
+
+    Optional<Stats> findFirstByBookIdAndReturnedFalse(Long bookId);
 }
