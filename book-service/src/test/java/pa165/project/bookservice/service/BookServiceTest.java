@@ -26,6 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class BookServiceTest {
     @Mock
     private BookRepository bookRepository;
+    
+    @org.mockito.Spy
+    private io.micrometer.core.instrument.MeterRegistry meterRegistry = new io.micrometer.core.instrument.simple.SimpleMeterRegistry();
+
     @InjectMocks
     private BookServiceImpl bookService;
 

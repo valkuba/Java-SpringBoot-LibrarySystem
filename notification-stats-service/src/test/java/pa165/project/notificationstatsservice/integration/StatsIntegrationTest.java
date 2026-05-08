@@ -5,18 +5,23 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import pa165.project.notificationstatsservice.config.SecurityConfig;
 import pa165.project.notificationstatsservice.messaging.NotificationMessageConsumer;
 import pa165.project.notificationstatsservice.model.Stats;
 import pa165.project.notificationstatsservice.repository.StatsRepository;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(SecurityConfig.class)
 public class StatsIntegrationTest {
 
     @Autowired
@@ -38,7 +43,8 @@ public class StatsIntegrationTest {
         statsRepository.save(Stats.builder().bookId(1L).bookTitle("Blood of elves").returned(true).build());
         statsRepository.save(Stats.builder().bookId(2L).bookTitle("Last wish").returned(false).build());
 
-        mockMvc.perform(get("/api/stats"))
+        mockMvc.perform(get("/api/stats")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -52,7 +58,8 @@ public class StatsIntegrationTest {
         seedStats("Best selling book", 2, 99L);
         seedStats("Random book title", 1, 101L);
 
-        mockMvc.perform(get("/api/stats/popular-books"))
+        mockMvc.perform(get("/api/stats/popular-books")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(5))
                 .andExpect(jsonPath("$[0].bookTitle").value("The Great Gatsby"))
@@ -73,7 +80,8 @@ public class StatsIntegrationTest {
         seedStats("Fahrenheit 451", 3, 13L);
         seedStats("How to get rich", 2, 33L);
 
-        mockMvc.perform(get("/api/stats/popular-books").param("limit", "2"))
+        mockMvc.perform(get("/api/stats/popular-books").param("limit", "2")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].bookTitle").value("The Great Gatsby"))

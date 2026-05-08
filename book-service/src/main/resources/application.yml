@@ -5,13 +5,39 @@ spring:
   datasource:
     url: jdbc:h2:mem:bookdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
+  liquibase:
+    change-log: classpath:/db/changelog/main-changelog.xml
+    enabled: true
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
   h2:
     console:
       enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://id.muni.cz/oidc/
+          audiences: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
+        opaque-token:
+          introspection-uri: https://id.muni.cz/oidc/introspect
+          client-id: d57b3a8f-156e-46de-9f27-39c4daee05e1
+          client-secret: fa228ebc-4d54-4cda-901e-4d6287f8b1652a9c9c44-73c9-4502-973f-bcdb4a8ec96a
+  
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      tags:
+        application: ${spring.application.name}
 
 server:
   port: 8080

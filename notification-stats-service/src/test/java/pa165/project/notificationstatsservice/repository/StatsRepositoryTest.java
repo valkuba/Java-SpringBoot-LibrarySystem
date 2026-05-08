@@ -143,4 +143,21 @@ public class StatsRepositoryTest {
 
         assertThat(statsRepository.findByBookTitle("Donnie Darko")).isEmpty();
     }
+
+    @Test
+    void findFirstByBookIdAndReturnedFalse_BookIdExistsAndNotReturned_ReturnsStat() {
+        Stats result = statsRepository.findFirstByBookIdAndReturnedFalse(1L).orElse(null);
+
+        assertThat(result).isNotNull();
+        assertThat(result.getBookId()).isEqualTo(1L);
+        assertThat(result.getBookTitle()).isEqualTo("Project Hail Mary");
+        assertThat(result.getReturned()).isFalse();
+    }
+
+    @Test
+    void findFirstByBookIdAndReturnedFalse_BookIdExistsButReturned_ReturnsEmpty() {
+        Stats result = statsRepository.findFirstByBookIdAndReturnedFalse(2L).orElse(null);
+
+        assertThat(result).isNull();
+    }
 }
