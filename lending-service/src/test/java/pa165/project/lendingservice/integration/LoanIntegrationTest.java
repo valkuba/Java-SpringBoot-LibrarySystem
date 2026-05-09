@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import pa165.project.lendingservice.messaging.LendingMessageProducer;
@@ -13,6 +14,7 @@ import pa165.project.lendingservice.dto.LoanDto;
 
 import java.time.LocalDate;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -40,6 +42,7 @@ public class LoanIntegrationTest {
 
         // CREATE
         var responseJson = mockMvc.perform(post("/api/loans")
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write")))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonMapper.writeValueAsString(loan)))
                 .andExpect(status().isCreated())
@@ -48,7 +51,8 @@ public class LoanIntegrationTest {
         var created = jsonMapper.readValue(responseJson, LoanDto.class);
 
         // GET
-        mockMvc.perform(get("/api/loans/{id}", created.getId()))
+        mockMvc.perform(get("/api/loans/{id}", created.getId())
+                        .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.memberId").value(1L))
                 .andExpect(jsonPath("$.status").value("LOANED"));
