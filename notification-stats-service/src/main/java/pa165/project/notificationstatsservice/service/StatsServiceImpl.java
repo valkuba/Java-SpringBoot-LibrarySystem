@@ -1,6 +1,10 @@
 package pa165.project.notificationstatsservice.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pa165.project.notificationstatsservice.model.Stats;
@@ -19,6 +23,18 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StatsServiceImpl implements StatsService {
     private final StatsRepository statsRepository;
+
+    private final MeterRegistry meterRegistry;
+
+    private Counter loansRecordedCounter;
+
+    @PostConstruct
+    public void init() {
+        loansRecordedCounter = Counter.builder("stats.loans.recorded.total")
+                .description("Total number of loans recorded")
+                .register(meterRegistry);
+    }
+
 
     @Transactional(readOnly = true)
     @Override
@@ -50,5 +66,27 @@ public class StatsServiceImpl implements StatsService {
                         LinkedHashMap::new
                 ));
     }
-}
 
+    @Transactional
+    @Override
+    public void recordLoan(Long bookId, String bookTitle) {
+        loansRecordedCounter.increment();
+
+        Stats stats = Stats.builder()
+                .bookId(bookId)
+                .bookTitle(bookTitle)
+                .returned(false)
+                .build();
+        statsRepository.save(stats);
+    }
+
+    @Transactional
+    @Override
+    public void markReturned(Long bookId) {
+        statsRepository.findFirstByBookIdAndReturnedFalse(bookId)
+                .ifPresent(stats -> {
+                    stats.setReturned(true);
+                    statsRepository.save(stats);
+                });
+    }
+}

@@ -3,9 +3,13 @@ package pa165.project.notificationstatsservice.rest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.jms.core.JmsTemplate;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import pa165.project.notificationstatsservice.config.SecurityConfig;
 import pa165.project.notificationstatsservice.dto.CreateNotificationDto;
 import pa165.project.notificationstatsservice.dto.NotificationDto;
 import pa165.project.notificationstatsservice.facade.NotificationFacade;
@@ -15,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import org.springframework.http.MediaType;
@@ -22,6 +27,7 @@ import org.springframework.http.MediaType;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(NotificationRestController.class)
+@Import(SecurityConfig.class)
 class NotificationRestControllerTest {
 
     @Autowired
@@ -40,7 +46,8 @@ class NotificationRestControllerTest {
     void getAllNotifications_shouldReturn200() throws Exception {
         when(notificationFacade.getAllNotifications()).thenReturn(List.of());
 
-        mockMvc.perform(get("/api/notifications"))
+        mockMvc.perform(get("/api/notifications")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk());
     }
 
@@ -48,7 +55,8 @@ class NotificationRestControllerTest {
     void getById_whenNotFound_shouldReturn404() throws Exception {
         when(notificationFacade.getById(99L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/api/notifications/99"))
+        mockMvc.perform(get("/api/notifications/99")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isNotFound());
     }
 
@@ -58,7 +66,8 @@ class NotificationRestControllerTest {
 
         when(notificationFacade.getById(1L)).thenReturn(Optional.of(dto));
 
-        mockMvc.perform(get("/api/notifications/1"))
+        mockMvc.perform(get("/api/notifications/1")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L));
     }
@@ -72,7 +81,8 @@ class NotificationRestControllerTest {
 
         mockMvc.perform(post("/api/notifications")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(dto))
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write"))))
                 .andExpect(status().isBadRequest());
     }
 
@@ -85,13 +95,15 @@ class NotificationRestControllerTest {
 
         mockMvc.perform(post("/api/notifications")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(dto))
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write"))))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void deleteNotification() throws Exception {
-        mockMvc.perform(delete("/api/notifications/1"))
+        mockMvc.perform(delete("/api/notifications/1")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write"))))
                 .andExpect(status().isNoContent());
     }
 
@@ -107,7 +119,8 @@ class NotificationRestControllerTest {
 
         mockMvc.perform(post("/api/notifications/overdue")
                 .param("recipientEmail", "test@gmail.com")
-                .param("bookTitle", "Blood of elves"))
+                .param("bookTitle", "Blood of elves")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_write"))))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(1L));
     }
@@ -122,7 +135,8 @@ class NotificationRestControllerTest {
 
         when(notificationFacade.getAllSortedByDate()).thenReturn(dtoList);
 
-        mockMvc.perform(get("/api/notifications/sorted"))
+        mockMvc.perform(get("/api/notifications/sorted")
+                    .with(jwt().authorities(new SimpleGrantedAuthority("SCOPE_test_read"))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(2L))
                 .andExpect(jsonPath("$[1].id").value(1L));

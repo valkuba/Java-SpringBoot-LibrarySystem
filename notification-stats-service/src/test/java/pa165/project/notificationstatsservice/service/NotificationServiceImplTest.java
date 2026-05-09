@@ -1,5 +1,9 @@
 package pa165.project.notificationstatsservice.service;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,8 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceImplTest {
@@ -27,6 +30,12 @@ class NotificationServiceImplTest {
 
     @InjectMocks
     private NotificationServiceImpl notificationServiceImpl;
+
+    @BeforeEach
+    void setUp() {
+        notificationServiceImpl = new NotificationServiceImpl(notificationRepository, new SimpleMeterRegistry());
+        notificationServiceImpl.init();
+    }
 
     @Test
     void getAllNotifications_shouldReturnAllNotifications() {
@@ -149,9 +158,9 @@ class NotificationServiceImplTest {
         when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createLoanReturnedNotification(
-                "test@gmail.com",  11L, "2026-04-25", "RETURNED");
+                "test@gmail.com",  11L, "Thomas The Train", "2026-04-25", "RETURNED");
 
-        assertThat(result.getMessage()).isEqualTo("Loan 11 was returned on 2026-04-25. Status: RETURNED.");
+        assertThat(result.getMessage()).isEqualTo("Loan 11 for book 'Thomas The Train' was returned on 2026-04-25. Status: RETURNED.");
         assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
         assertThat(result.getCreatedAt()).isNotNull();
         verify(notificationRepository).save(any(Notification.class));
@@ -162,9 +171,9 @@ class NotificationServiceImplTest {
         when(notificationRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         Notification result = notificationServiceImpl.createFineIssuedNotification(
-                "test@gmail.com", 12L, 150.0, "2026-04-26");
+                "test@gmail.com", 12L, "How to get rich",  150.0, "2026-04-26");
 
-        assertThat(result.getMessage()).isEqualTo("Fine of 150.0 CZK was issued for loan 12 on 2026-04-26.");
+        assertThat(result.getMessage()).isEqualTo("Fine of 150.0 CZK was issued for loan 12 ('How to get rich') on 2026-04-26.");
         assertThat(result.getRecipientEmail()).isEqualTo("test@gmail.com");
         assertThat(result.getCreatedAt()).isNotNull();
         verify(notificationRepository).save(any(Notification.class));

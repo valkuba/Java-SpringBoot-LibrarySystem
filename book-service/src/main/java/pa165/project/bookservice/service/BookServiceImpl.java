@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pa165.project.bookservice.model.Book;
 import pa165.project.bookservice.repository.BookRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
+    private final MeterRegistry meterRegistry;
 
     @Transactional(readOnly = true)
     @Override
@@ -86,6 +88,10 @@ public class BookServiceImpl implements BookService {
     @Transactional(readOnly = true)
     @Override
     public List<Book> searchBooks(String title, String author, String genre) {
+        if (author != null && !author.isBlank()) {
+            meterRegistry.counter("book_searches_by_author", "author_name", author.toLowerCase()).increment();
+        }
+        
         List<Book> candidates;
 
         if (title != null) {

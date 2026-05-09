@@ -79,6 +79,29 @@ Each service exposes its REST API documented via Swagger UI at the URL listed ab
 
 ---
 
+### Prometheus
+To access Prometheus, use the following commands:
+```bash
+docker-compose up --build
+```
+and then access this URL:
+
+http://localhost:9090
+
+### Grafana
+To access Grafana, use the following commands:
+```bash
+docker-compose up --build
+```
+and then access this URL:
+
+http://localhost:3000
+
+The username is `admin`
+The password is `admin`
+
+---
+
 ## Architecture
 The project is equally divided into 4 microservices, each owned by one team member.
 

@@ -10,9 +10,12 @@ public interface NotificationService {
     Notification createNotification(Notification notification);
     void deleteNotification(Long id);
     Notification createOverdueNotification(String recipientEmail, String bookTitle);
-    Notification createLoanCreatedNotification(String recipientEmail, String bookTitle, Long loanId, String loanDate);
-    Notification createLoanReturnedNotification(String recipientEmail, Long loanId, String returnDate, String status);
-    Notification createFineIssuedNotification(String recipientEmail, Long loanId, Double fineAmount, String date);
+    Notification createLoanCreatedNotification(String recipientEmail, String bookTitle, Long loanId,
+                                               String loanDate);
+    Notification createLoanReturnedNotification(String recipientEmail, Long loanId, String bookTitle,
+                                                String returnDate, String status);
+    Notification createFineIssuedNotification(String recipientEmail, Long loanId, String bookTitle,
+                                              Double fineAmount, String date);
     Notification createReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
                                                       String reservationDate, String whenAvailableDate, String status);
     Notification updateReservationCreatedNotification(String recipientEmail, String bookTitle, Long reservationId,
