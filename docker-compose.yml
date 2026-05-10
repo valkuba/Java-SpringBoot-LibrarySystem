@@ -73,7 +73,4 @@ services:
       - prometheus
     volumes:
       - ./grafana-datasource.yml:/etc/grafana/provisioning/datasources/datasource.yml:z
-      - ./grafana-dashboards.yml:/etc/grafana/provisioning/dashboards/dashboards.yml:z
-      - ./book-service/grafana.json:/var/lib/grafana/dashboards/grafana.json:z
-      - ./notification-stats-service/notification-stats-grafana.json:/var/lib/grafana/dashboards/notification-stats-grafana.json:z
-      - ./member-service/grafana.json:/var/lib/grafana/dashboards/member-grafana.json:z
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:z
