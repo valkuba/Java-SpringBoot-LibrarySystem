@@ -1,6 +1,8 @@
 package pa165.project.memberservice.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import pa165.project.memberservice.model.Member;
@@ -12,15 +14,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final MeterRegistry meterRegistry;
 
     @Override
     public Member registerMember(Member member) throws MemberServiceException {
-        if(member.getId() != null && memberRepository.findById(member.getId()).isPresent())
+        if(member.getId() != null && memberRepository.findById(member.getId()).isPresent()) {
             throw new MemberIdAlreadyExistsException(member.getId());
+        }
         if(memberRepository.findByUsername(member.getUsername()).isPresent()){
             throw new MemberNameAlreadyExistsException(member.getUsername());
         }
@@ -28,6 +33,8 @@ public class MemberServiceImpl implements MemberService {
             throw new EmailAlreadyRegisteredException(member.getEmail());
         }
         memberRepository.save(member);
+        log.info("Member registered: username={}, email={}", member.getUsername(), member.getEmail());
+        meterRegistry.counter("member.registered").increment();
         return member;
     }
 
@@ -43,6 +50,7 @@ public class MemberServiceImpl implements MemberService {
         }
         member.setActivated(true);
         memberRepository.save(member);
+        meterRegistry.counter("member.activated").increment();
     }
 
     @Override
@@ -69,6 +77,8 @@ public class MemberServiceImpl implements MemberService {
         } catch (DataIntegrityViolationException e) {
             throw new MemberUpdateException("Could not update member",e);
         }
+        log.info("Member updated: id={}, username={}", updated.getId(), updated.getUsername());
+        meterRegistry.counter("member.updated").increment();
         return updated;
     }
 
@@ -79,6 +89,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void removeMember(Long id) {
         memberRepository.deleteById(id);
+        log.info("Member removed: id={}", id);
+        meterRegistry.counter("member.removed").increment();
     }
 
     @Override

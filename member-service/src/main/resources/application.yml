@@ -1,7 +1,36 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://id.muni.cz/oidc/
+          audiences: 7e02a0a9-446a-412d-ad2b-90add47b0fdd
+        opaque-token:
+          introspection-uri: https://id.muni.cz/oidc/introspect
+          # Martin Kuba's testing resource server
+          client-id: d57b3a8f-156e-46de-9f27-39c4daee05e1
+          client-secret: fa228ebc-4d54-4cda-901e-4d6287f8b1652a9c9c44-73c9-4502-973f-bcdb4a8ec96a
   application:
     name: member-service
+  datasource:
+    url: jdbc:h2:mem:memberdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml
 
 server:
   port: 8082
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, metrics, prometheus
+  endpoint:
+    health:
+      show-details: always
