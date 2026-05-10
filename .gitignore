@@ -63,3 +63,6 @@ Thumbs.db
 
 # Ignore generated files by build tools
 **/generated/**
+
+# Python cache files
+__pycache__/
