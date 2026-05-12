@@ -8,84 +8,144 @@
     <changeSet id="002" author="xvales">
         <comment>Insert test data</comment>
 
-        <!-- Notifications -->
+        <!-- NOTIFICATIONS -->
+
+        <!-- Loan 1: member 1 borrowed book_copy 1 on 2026-01-05 -->
         <insert tableName="notification">
-            <column name="message" value="Loan 1 for 'Kitchen Confidential' was created on 2026-04-27."/>
-            <column name="recipient_email" value="saymyname@yahoo.com"/>
-            <column name="created_at" value="2026-04-28 09:00:00"/>
+            <column name="message" value="Loan 1 for 'The Last Wish' was created on 2026-01-05."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-01-05 09:00:00"/>
         </insert>
 
-        <!-- Loan returned -->
+        <!-- Loan 1: member 1 returned book_copy 1 on 2026-01-18 -->
         <insert tableName="notification">
-            <column name="message" value="Loan 1 for book 'Kitchen Confidential' was returned on 2026-04-27. Status: RETURNED."/>
-            <column name="recipient_email" value="saymyname@yahoo.com"/>
-            <column name="created_at" value="2026-04-28 14:00:00"/>
+            <column name="message" value="Loan 1 for book 'The Last Wish' was returned on 2026-01-18. Status: RETURNED."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-01-18 14:00:00"/>
         </insert>
 
-        <!-- Fine issued -->
+        <!-- Loan 2: member 2 borrowed book_copy 3 on 2026-01-10 -->
         <insert tableName="notification">
-            <column name="message" value="Fine of 50.0 CZK was issued for loan 1 ('Kitchen Confidential') on 2026-04-28."/>
-            <column name="recipient_email" value="uniquename@google.com"/>
-            <column name="created_at" value="2026-04-29 08:30:00"/>
+            <column name="message" value="Loan 2 for 'Design Patterns' was created on 2026-01-10."/>
+            <column name="recipient_email" value="petra.dvorak@seznam.cz"/>
+            <column name="created_at" value="2026-01-10 09:00:00"/>
         </insert>
 
-        <!-- Reservation created -->
+        <!-- Loan 3: member 1 borrowed book_copy 2 on 2026-02-01 -->
         <insert tableName="notification">
-            <column name="message" value="Reservation 1 for 'Kitchen Confidential' was created on 2026-04-29. Available on: 2026-04-30. Status: ACTIVE."/>
-            <column name="recipient_email" value="uniquename@google.com"/>
-            <column name="created_at" value="2026-04-29 11:00:00"/>
+            <column name="message" value="Loan 3 for 'Blood of Elves' was created on 2026-02-01."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-02-01 09:00:00"/>
         </insert>
 
-        <!-- Reservation updated -->
+        <!-- Loan 3: member 1 returned book_copy 2 on 2026-02-20 (overdue, fine issued) -->
         <insert tableName="notification">
-            <column name="message" value="Reservation 1 for 'Kitchen Confidential' was updated on 2026-04-29. Available on: 2026-04-30. Status: UPDATED."/>
-            <column name="recipient_email" value="uniquename@google.com"/>
-            <column name="created_at" value="2026-04-29 16:45:00"/>
+            <column name="message" value="Loan 3 for book 'Blood of Elves' was returned on 2026-02-20. Status: RETURNED."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-02-20 10:00:00"/>
+        </insert>
+
+        <!-- Fine 1: member 1, loan 3, 25 CZK on 2026-02-20 -->
+        <insert tableName="notification">
+            <column name="message" value="Fine of 25.0 CZK was issued for loan 3 ('Blood of Elves') on 2026-02-20."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-02-20 10:30:00"/>
+        </insert>
+
+        <!-- Loan 4: member 3 borrowed book_copy 1 on 2026-02-10 -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 4 for 'The Last Wish' was created on 2026-02-10."/>
+            <column name="recipient_email" value="tomas.kral@gmail.com"/>
+            <column name="created_at" value="2026-02-10 09:00:00"/>
+        </insert>
+
+        <!-- Loan 5: member 2 borrowed book_copy 1 on 2026-03-01 -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 5 for 'The Last Wish' was created on 2026-03-01."/>
+            <column name="recipient_email" value="petra.dvorak@seznam.cz"/>
+            <column name="created_at" value="2026-03-01 09:00:00"/>
+        </insert>
+
+        <!-- Loan 6: member 4 borrowed book_copy 1 on 2026-03-10 -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 6 for 'The Last Wish' was created on 2026-03-10."/>
+            <column name="recipient_email" value="lucie.blaha@email.cz"/>
+            <column name="created_at" value="2026-03-10 09:00:00"/>
+        </insert>
+
+        <!-- Loan 7: member 5 borrowed book_copy 2 on 2026-03-20 -->
+        <insert tableName="notification">
+            <column name="message" value="Loan 7 for 'Blood of Elves' was created on 2026-03-20."/>
+            <column name="recipient_email" value="martin.cerny@seznam.cz"/>
+            <column name="created_at" value="2026-03-20 09:00:00"/>
+        </insert>
+
+        <!-- Reservation 1: member 1, book 2 on 2026-01-20 -->
+        <insert tableName="notification">
+            <column name="message" value="Reservation 1 for 'Blood of Elves' was created on 2026-01-20. Available on: 2026-02-01. Status: ACTIVE."/>
+            <column name="recipient_email" value="jan.novak@email.cz"/>
+            <column name="created_at" value="2026-01-20 11:00:00"/>
+        </insert>
+
+        <!-- Reservation 2: member 3, book 1 on 2026-02-05 -->
+        <insert tableName="notification">
+            <column name="message" value="Reservation 2 for 'The Last Wish' was created on 2026-02-05. Available on: 2026-02-20. Status: ACTIVE."/>
+            <column name="recipient_email" value="tomas.kral@gmail.com"/>
+            <column name="created_at" value="2026-02-05 11:00:00"/>
+        </insert>
+
+        <!-- Reservation 3: member 2, book 3 on 2026-03-01 -->
+        <insert tableName="notification">
+            <column name="message" value="Reservation 3 for 'Blood of Elves' was created on 2026-03-01. Available on: null. Status: PENDING."/>
+            <column name="recipient_email" value="petra.dvorak@seznam.cz"/>
+            <column name="created_at" value="2026-03-01 11:00:00"/>
+        </insert>
+
+        <!-- Fine 2: member 2, loan 1, 0 CZK on 2026-01-18 (PAID) -->
+        <insert tableName="notification">
+            <column name="message" value="Fine of 0.0 CZK was issued for loan 1 ('The Last Wish') on 2026-01-18."/>
+            <column name="recipient_email" value="petra.dvorak@seznam.cz"/>
+            <column name="created_at" value="2026-01-18 15:00:00"/>
         </insert>
 
         <!-- Stats -->
         <insert tableName="stats">
             <column name="book_id" value="1"/>
-            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="book_title" value="The last wish"/>
             <column name="returned" value="true"/>
-        </insert>
-        <insert tableName="stats">
-            <column name="book_id" value="2"/>
-            <column name="book_title" value="Fight Club"/>
-            <column name="returned" value="false"/>
         </insert>
         <insert tableName="stats">
             <column name="book_id" value="3"/>
-            <column name="book_title" value="The Green Mile"/>
+            <column name="book_title" value="Design Patterns"/>
+            <column name="returned" value="false"/>
+        </insert>
+        <insert tableName="stats">
+            <column name="book_id" value="2"/>
+            <column name="book_title" value="Blood of elves"/>
             <column name="returned" value="true"/>
         </insert>
         <insert tableName="stats">
             <column name="book_id" value="1"/>
-            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="book_title" value="The last wish"/>
             <column name="returned" value="false"/>
         </insert>
 
         <insert tableName="stats">
             <column name="book_id" value="1"/>
-            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="book_title" value="The last wish"/>
             <column name="returned" value="false"/>
         </insert>
 
         <insert tableName="stats">
             <column name="book_id" value="1"/>
-            <column name="book_title" value="Kitchen Confidential"/>
+            <column name="book_title" value="The last wish"/>
             <column name="returned" value="false"/>
         </insert>
 
-        <insert tableName="stats">
-            <column name="book_id" value="1"/>
-            <column name="book_title" value="Kitchen Confidential"/>
-            <column name="returned" value="false"/>
-        </insert>
 
         <insert tableName="stats">
             <column name="book_id" value="2"/>
-            <column name="book_title" value="Fight Club"/>
+            <column name="book_title" value="Blood of elves"/>
             <column name="returned" value="false"/>
         </insert>
 
